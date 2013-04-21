@@ -39,7 +39,7 @@ import com.sun.management.HotSpotDiagnosticMXBean;
  * @author miyake
  *
  */
-public class JvmConnectionClient
+public class JvmClientProxy
 {
     /**
      * Java VM connection status.
@@ -72,9 +72,38 @@ public class JvmConnectionClient
     private com.sun.management.OperatingSystemMXBean    sunOperatingSystemMXBean_ = null;
     private HotSpotDiagnosticMXBean                     hotspotDiagnosticMXBean_ = null;
 
-    private List<MemoryPool>                memoryPoolList_ = null;
+    private List<MemoryPoolClientProxy>                memoryPoolList_ = null;
     private List<GarbageCollectorMXBean>    garbageCollectorMBeanList_ = null;
     private String                          detectDeadlocksOperation_ = null;
 
     final static private String HOTSPOT_DIAGNOSTIC_MXBEAN_NAME = "com.sun.management:type=HotSpotDiagnostic";
+    
+    
+    /**
+     * @param localJvmInfo
+     */
+    public JvmClientProxy(LocalJvmInfo localJvmInfo)
+    {
+        this.localJvmInfo_ = localJvmInfo;
+    }
+
+    public boolean connect()
+    {
+        boolean     ret = false;
+        
+        return ret;
+    }
+    
+    public boolean disconnect()
+    {
+        boolean     ret = false;
+        
+        return ret;
+    }
+    
+    public boolean isConnect()
+    {
+        return this.isConnect_;
+    }
+    
 }

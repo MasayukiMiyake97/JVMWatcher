@@ -23,7 +23,7 @@ package org.fluentd.jvmwatcher;
  * @author miyake
  *
  */
-public class MemoryPool
+public class MemoryPoolClientProxy
 {
 
 }
