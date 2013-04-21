@@ -40,7 +40,7 @@ import sun.jvmstat.monitor.MonitorException;
 import sun.jvmstat.monitor.VmIdentifier;
 
 /**
- * Local Java VM Information Class 
+ * Local Java VM Information class.
  * @author miyake
  *
  */

@@ -20,7 +20,7 @@ package org.fluentd.jvmwatcher;
 import java.lang.management.MemoryUsage;
 
 /**
- * Memory pool status class.
+ * The class that stores the status obtained from MemoryPool.
  * @author miyake
  *
  */

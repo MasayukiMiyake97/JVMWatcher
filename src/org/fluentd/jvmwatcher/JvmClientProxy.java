@@ -34,8 +34,8 @@ import com.sun.management.HotSpotDiagnosticMXBean;
 
 
 /**
- * JVM Server connection and JMX Proxy managed class<BR>
- * The JvmConnectionClient class used local JVM only.
+ * This class manages the MXBens to obtain the status of the JVM. And I also do connection management of the JVM.<BR>
+ * JvmClientProxy will correspond to only the local JVM.
  * @author miyake
  *
  */

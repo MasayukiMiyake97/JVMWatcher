@@ -18,7 +18,7 @@
 package org.fluentd.jvmwatcher;
 
 /**
- * Memory Pool Information class.<BR>
+ * This class manages the MXBesn of GarbageCollector and MemoryPool. And this, to get the state of MemoryPool.<BR>
  * 
  * @author miyake
  *
