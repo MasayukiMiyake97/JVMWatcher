@@ -45,13 +45,18 @@ public class JvmClientProxy
      * Java VM connection status.
      */
     private boolean             isConnect_ = false;
+    /**
+     * Target Java VM dead flag.
+     */
+    private boolean             isDeadServer_ = false;
+    
     private boolean             hasPlatformMXBeans_ = false;
     private boolean             hasHotSpotDiagnosticMXBean_ = false;
     private boolean             hasCompilationMXBean_ = false;
     private boolean             supportsLockUsage_ = false;
 
     /**
-     * Local Java VM connection information.
+     * Local Java VM information.
      */
     private LocalJvmInfo        localJvmInfo_ = null;
     
@@ -88,15 +93,22 @@ public class JvmClientProxy
         this.localJvmInfo_ = localJvmInfo;
     }
 
+    /**
+     * @return
+     */
     public boolean connect()
     {
         boolean     ret = false;
 
         // connect the JVM server
         
+        
         return ret;
     }
     
+    /**
+     * @return
+     */
     public boolean disconnect()
     {
         boolean     ret = false;
@@ -106,9 +118,21 @@ public class JvmClientProxy
         return ret;
     }
     
+    /**
+     * @return
+     */
     public boolean isConnect()
     {
+        
         return this.isConnect_;
+    }
+    
+    /**
+     * @return
+     */
+    public JvmWatchState getWatchState()
+    {
+        return null;
     }
     
 }
