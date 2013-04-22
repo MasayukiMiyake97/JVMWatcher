@@ -58,6 +58,7 @@ public class JvmClientProxy
     // JVM server connection information
     private JMXServiceURL       jmxUrl_ = null;
     private JMXConnector        jmxc_ = null;
+
     // JVM MBean Server connection
     private MBeanServerConnection   server_ = null;
 
@@ -90,6 +91,8 @@ public class JvmClientProxy
     public boolean connect()
     {
         boolean     ret = false;
+
+        // connect the JVM server
         
         return ret;
     }
@@ -97,6 +100,8 @@ public class JvmClientProxy
     public boolean disconnect()
     {
         boolean     ret = false;
+
+        // disconnect the JVM server
         
         return ret;
     }
