@@ -117,7 +117,7 @@ public class LocalJvmInfo
     private static void getMonitoredJvms(Map<Integer, LocalJvmInfo> map)
     {
         MonitoredHost   monHost = null;
-        Set             activVmsSet = null;
+        Set<Object>     activVmsSet = null;
 
         try 
         {
@@ -357,6 +357,15 @@ public class LocalJvmInfo
     public boolean isAttachSupported()
     {
         return isAttachSupported_;
+    }
+    
+    /**
+     * Manageable check
+     * @return
+     */
+    public boolean isManageable()
+    {
+        return (this.mbeanAddress_ != null);
     }
 
     /* (”ñ Javadoc)
