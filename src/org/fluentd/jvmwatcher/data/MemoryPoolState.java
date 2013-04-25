@@ -15,7 +15,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-package org.fluentd.jvmwatcher;
+package org.fluentd.jvmwatcher.data;
 
 import java.lang.management.MemoryUsage;
 

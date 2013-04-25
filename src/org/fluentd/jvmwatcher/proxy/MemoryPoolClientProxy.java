@@ -15,7 +15,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-package org.fluentd.jvmwatcher;
+package org.fluentd.jvmwatcher.proxy;
 
 /**
  * This class manages the MXBesn of GarbageCollector and MemoryPool. And this, to get the state of MemoryPool.<BR>

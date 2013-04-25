@@ -15,7 +15,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-package org.fluentd.jvmwatcher;
+package org.fluentd.jvmwatcher.proxy;
 
 import static java.lang.management.ManagementFactory.CLASS_LOADING_MXBEAN_NAME;
 import static java.lang.management.ManagementFactory.COMPILATION_MXBEAN_NAME;
@@ -56,6 +56,9 @@ import javax.management.ReflectionException;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
+
+import org.fluentd.jvmwatcher.LocalJvmInfo;
+import org.fluentd.jvmwatcher.data.JvmWatchState;
 
 import com.sun.management.HotSpotDiagnosticMXBean;
 

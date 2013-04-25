@@ -15,7 +15,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //
-package org.fluentd.jvmwatcher;
+package org.fluentd.jvmwatcher.data;
 
 /**
  * This class holds a snapshot of the state of the JVM. Date and get the state, the CPU utilization, such as a command name is stored.
