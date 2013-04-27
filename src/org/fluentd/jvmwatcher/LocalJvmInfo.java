@@ -117,11 +117,11 @@ public class LocalJvmInfo
     private static void getMonitoredJvms(Map<Integer, LocalJvmInfo> map)
     {
         MonitoredHost   monHost = null;
-        Set<Object>     activVmsSet = null;
+        Set<Integer>     activVmsSet = null;
 
         try 
         {
-            // get monitored hostÅ@& jvms
+            // get monitored host jvms
             monHost = MonitoredHost.getMonitoredHost(new HostIdentifier((String)null));
             activVmsSet = monHost.activeVms();
         } 
@@ -368,7 +368,7 @@ public class LocalJvmInfo
         return (this.mbeanAddress_ != null);
     }
 
-    /* (îÒ Javadoc)
+    /* (ÔøΩÔøΩ Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
