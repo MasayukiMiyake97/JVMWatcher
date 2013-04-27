@@ -3,7 +3,6 @@ package org.fluentd.jvmwatcher;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.Map;
 
 import org.junit.Before;
@@ -18,9 +17,6 @@ public class LocalJvmInfoTest
     {
         this.jvmMap_ = LocalJvmInfo.getAllLocalJvmInfos();
         
-        String  hostname = InetAddress.getLocalHost().getHostName();
-        
-        System.out.println("hostname=" + hostname);
     }
 
     @Test
