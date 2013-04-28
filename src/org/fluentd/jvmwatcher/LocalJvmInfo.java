@@ -368,7 +368,7 @@ public class LocalJvmInfo
         return (this.mbeanAddress_ != null);
     }
 
-    /* (�� Javadoc)
+    /* (非 Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
