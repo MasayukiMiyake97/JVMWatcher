@@ -28,6 +28,13 @@ public class LocalJvmInfoTest
                                    " address=" + val.getAddress());
                 
                 val.startManagementAgent();
+
+                System.out.println("-- after startManagementAgent ");
+                System.out.println("key=" + key + " isManageable=" + val.isManageable() +
+                        " isAttachSupported=" + val.isAttachSupported() +
+                        " isCommandLine=" + val.getCommandLine_() +
+                        " address=" + val.getAddress());
+     
             }
             catch (IOException e)
             {
