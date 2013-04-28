@@ -273,6 +273,7 @@ public class JvmClientProxy
         if (this.isDeadServer_ == false) {
             this.isDeadServer_ = true;
             this.isConnect_ = false;
+            ret = true;
         }
         return ret;
     }
