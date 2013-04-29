@@ -138,8 +138,8 @@ public class JvmClientProxyTest
             long unloadedCount = bean.getUnloadedClassCount();
             
             System.out.print("[ClassLoadingMXBean] loadedCount=" + loadedCount);
-            System.out.print(" totalLoadedCount=" + loadedCount);
-            System.out.println(" totalLoadedCount=" + loadedCount);
+            System.out.print(" totalLoadedCount=" + totalLoadedCount);
+            System.out.println(" totalLoadedCount=" + unloadedCount);
         }
         catch (IOException e)
         {
