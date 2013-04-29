@@ -17,6 +17,8 @@
 //
 package org.fluentd.jvmwatcher.data;
 
+import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
+
 /**
  * This class holds a snapshot of the state of the JVM. Date and get the state, the CPU utilization, such as a command name is stored.
  * @author miyake
@@ -25,4 +27,15 @@ package org.fluentd.jvmwatcher.data;
 public class JvmWatchState
 {
 
+    
+    /**
+     * @param clientPrixy
+     * @return
+     */
+    public static JvmWatchState makeJvmWatchState(JvmClientProxy clientPrixy)
+    {
+        return null;
+    }
+    
+    
 }

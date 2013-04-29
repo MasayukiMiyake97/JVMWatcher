@@ -19,7 +19,9 @@ package org.fluentd.jvmwatcher.proxy;
 
 import static java.lang.management.ManagementFactory.CLASS_LOADING_MXBEAN_NAME;
 import static java.lang.management.ManagementFactory.COMPILATION_MXBEAN_NAME;
+import static java.lang.management.ManagementFactory.GARBAGE_COLLECTOR_MXBEAN_DOMAIN_TYPE;
 import static java.lang.management.ManagementFactory.MEMORY_MXBEAN_NAME;
+import static java.lang.management.ManagementFactory.MEMORY_POOL_MXBEAN_DOMAIN_TYPE;
 import static java.lang.management.ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME;
 import static java.lang.management.ManagementFactory.RUNTIME_MXBEAN_NAME;
 import static java.lang.management.ManagementFactory.THREAD_MXBEAN_NAME;
@@ -34,6 +36,8 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -59,7 +63,6 @@ import javax.management.remote.JMXServiceURL;
 
 import org.fluentd.jvmwatcher.LocalJvmInfo;
 import org.fluentd.jvmwatcher.data.JvmWatchState;
-
 import com.sun.management.HotSpotDiagnosticMXBean;
 
 
@@ -286,17 +289,15 @@ public class JvmClientProxy
         
         return this.isConnect_;
     }
-    
+
     /**
-     * get JVM watch state object.
-     * 
      * @return
      */
-    public JvmWatchState getWatchState()
+    boolean isLockUsageSupported()
     {
-        return null;
+        return this.supportsLockUsage_;
     }
-
+    
     /**
      * @return
      * @throws IOException
@@ -306,6 +307,14 @@ public class JvmClientProxy
         return this.server_.getDomains();
     }
 
+    /**
+     * @return
+     */
+    public LocalJvmInfo getLocalJvmInfo()
+    {
+        return this.localJvmInfo_;
+    }
+    
     /**
      * @param domain
      * @return
@@ -407,6 +416,16 @@ public class JvmClientProxy
         {
             System.err.println(ex.toString());
         }
+    }
+
+    /**
+     * @param name
+     * @return
+     * @throws IOException
+     */
+    public boolean isRegistered(ObjectName name) throws IOException
+    {
+        return this.server_.isRegistered(name);
     }
 
     /**
@@ -537,12 +556,14 @@ public class JvmClientProxy
                 }
             }
         } 
-        catch (InstanceNotFoundException e)
+        catch (InstanceNotFoundException ex)
         {
+            System.err.println(ex.toString());
              return null;
         }
-        catch (MalformedObjectNameException e)
+        catch (MalformedObjectNameException ex)
         {
+            System.err.println(ex.toString());
              return null; // should never reach here
         }
 
@@ -563,6 +584,104 @@ public class JvmClientProxy
         return this.hotspotDiagnosticMXBean_;
     }
 
+    /**
+     * @return
+     * @throws IOException
+     */
+    public synchronized Collection<GarbageCollectorMXBean> getGarbageCollectorMXBeans() throws IOException
+    {
+        if (this.garbageCollectorMBeanList_ == null)
+        {
+            ObjectName  gcName = null;
+
+            try
+            {
+                gcName = new ObjectName(GARBAGE_COLLECTOR_MXBEAN_DOMAIN_TYPE + ",*");
+            }
+            catch (MalformedObjectNameException ex)
+            {
+                System.err.println(ex.toString());
+                return null;
+            }
+
+            Set<ObjectName> objNameSet = this.server_.queryNames(gcName, null);
+
+            if (objNameSet != null)
+            {
+                this.garbageCollectorMBeanList_ = new ArrayList<GarbageCollectorMXBean>();
+                Iterator<ObjectName>    iterator = objNameSet.iterator();
+
+                while (iterator.hasNext())
+                {
+                    ObjectName objName = iterator.next();
+                    String name = GARBAGE_COLLECTOR_MXBEAN_DOMAIN_TYPE + ",name=" + objName.getKeyProperty("name");
+
+                    GarbageCollectorMXBean mBean = newPlatformMXBeanProxy(this.server_, name, GarbageCollectorMXBean.class);
+                    this.garbageCollectorMBeanList_.add(mBean);
+                }
+            }
+        }
+
+        return this.garbageCollectorMBeanList_;
+    }
+
+    /**
+     * @return
+     * @throws IOException
+     */
+    public long[] findDeadlockedThreads() throws IOException
+    {
+        ThreadMXBean threadMx = getThreadMXBean();
+        if (this.supportsLockUsage_ && threadMx.isSynchronizerUsageSupported())
+        {
+            return threadMx.findDeadlockedThreads();
+        }
+        else
+        {
+            return threadMx.findMonitorDeadlockedThreads();
+        }
+    }
+    
+    public Collection<MemoryPoolClientProxy> getMemoryPoolClientProxies() throws IOException
+    {
+
+        if (this.memoryPoolList_ == null)
+        {
+            ObjectName  poolName = null;
+            try
+            {
+                poolName = new ObjectName(MEMORY_POOL_MXBEAN_DOMAIN_TYPE + ",*");
+            }
+            catch (MalformedObjectNameException ex)
+            {
+                System.err.println(ex.toString());
+                return null;
+            }
+
+            Set<ObjectName> objNameSet = this.server_.queryNames(poolName, null);
+
+            if (objNameSet != null)
+            {
+                this.memoryPoolList_ = new ArrayList<MemoryPoolClientProxy>();
+                Iterator<ObjectName>    iterator = objNameSet.iterator();
+
+                while (iterator.hasNext())
+                {
+                    ObjectName objName = iterator.next();
+                    MemoryPoolClientProxy   memoryPool = new MemoryPoolClientProxy(this);
+
+                    if (memoryPool.init(objName) == true)
+                    {
+                        this.memoryPoolList_.add(memoryPool);
+                    }
+                }
+            }
+        }
+        
+        return this.memoryPoolList_;
+    }
+    
+    
     /**
      * @param objName
      * @param interfaceClass
