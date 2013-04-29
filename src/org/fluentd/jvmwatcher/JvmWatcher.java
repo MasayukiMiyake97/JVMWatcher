@@ -17,6 +17,9 @@
 //
 package org.fluentd.jvmwatcher;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 /**
  * JVM Watcher Main Class
  * @author miyake
@@ -33,4 +36,27 @@ public class JvmWatcher
 
     }
 
+    
+    /**
+     * @return
+     */
+    public static String getHostName(String defaultName)
+    {
+        String      ret = null;
+        
+        try
+        {
+            ret = InetAddress.getLocalHost().getHostName();
+        }
+        catch (UnknownHostException ex)
+        {
+            if (defaultName != null)
+            {
+                ret = defaultName;
+            }
+            System.err.println("unknown hostname. check to /etc/hosts.  Exception=" + ex);
+        }
+        return ret;
+    }
+    
 }
