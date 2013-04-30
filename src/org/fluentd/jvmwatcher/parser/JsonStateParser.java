@@ -25,23 +25,16 @@ import org.fluentd.jvmwatcher.data.JvmWatchState;
  * @author miyake
  *
  */
-public abstract class AbstractStateParser
+public class JsonStateParser extends AbstractStateParser
 {
-    private     String  hostName_ = null;
-    
 
-    /**
-     * @return
+    /* (非 Javadoc)
+     * @see org.fluentd.jvmwatcher.parser.AbstractStateParser#parseState(java.io.PrintWriter, org.fluentd.jvmwatcher.data.JvmWatchState)
      */
-    public String getHostName()
+    @Override
+    public boolean parseState(PrintWriter out, JvmWatchState src)
     {
-        return this.hostName_;
+        return false;
     }
 
-    /**
-     * @param out
-     * @param src
-     * @return
-     */
-    public abstract boolean parseState(PrintWriter out, JvmWatchState src);
 }
