@@ -18,7 +18,7 @@
 package org.fluentd.jvmwatcher.data;
 
 import java.lang.management.MemoryUsage;
-import java.util.Collection;
+import java.util.ArrayList;
 
 import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
 
@@ -29,6 +29,30 @@ import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
  */
 public class JvmWatchState
 {
+    /**
+     *
+     */
+    public enum ProcessState {
+        /**
+         * 
+         */
+        START_PROCESS,
+        /**
+         * 
+         */
+        LIVE_PROCESS,
+        /**
+         * 
+         */
+        END_PROCESS
+    }
+
+    
+    /**
+     * 
+     */
+    private ProcessState    procState_ = ProcessState.LIVE_PROCESS;
+    
     /**
      * Java program command line 
      */
@@ -42,49 +66,22 @@ public class JvmWatchState
      */
     private int         jvmId_ = -1;
 
-    /**
-     * 
-     */
-    private long        DateTime_ = 0L;
-
-    // ClassLoadingMXBean
-    private int         classLoadedCount_ = 0;
-    private long        classUnloadedCount_ = 0L;
-    private long        classTotalLoadedCount_ = 0L;
     // CompilationMXBean
     private String      jitName_ = null;
-    private long        compileTime_ = 0L;
     // MemoryMXBean
     private MemoryUsage heapSize_ = null;
     private MemoryUsage notheapSize_ = null;
     private int         pendingFinalizationCount_ = 0;
     // OperatingSystemMXBean
     private String      osArch_ = null;
-    private int         osAvailableProcessors_ = 0;
     private String      osName_ = null;
-    private double      osSystemLoadAverage_ = 0.0;
     private String      osVersion_ = null;
-    // com.sun.management.OperatingSystemMXBean
-    private long        committedVirtualMemorySize_ = -1L;
-    private long        freePhysicalMemorySize_ = -1L;
-    private long        freeSwapSpaceSize_ = -1L;
-    private long        processCpuTime_ = -1L;
-    private long        totalPhysicalMemorySize_ = -1L;
-    private long        totalSwapSpaceSize_ = -1L;
     // RuntimeMXBean
     private String      jvmRuntimeName = null;
-    private long        jvmStartTime = -1L;
-    private long        jvmUpTime = -1L;
-    private String      vmName = null;
-    private String      vmVender = null;
-    private String      vmVersion = null;
-    private String      specName = null;
-    private String      specVender = null;
-    private String      specVersion = null;
-    // MemoryPoolMXBean
-    private Collection<MemoryPoolState>         memoryPoolStateColl_ = null;
-    // GarbageCollectorMXBean
-    private Collection<GarbageCollectorState>   gcCollectorColl_ = null;
+
+    private ArrayList<JvmStateLog>  stateLog_ = null;
+    
+    
     
     /**
      * @param clientPrixy
@@ -99,6 +96,9 @@ public class JvmWatchState
         ret.displayName_ = clientPrixy.getLocalJvmInfo().getDisplayName();
         ret.jvmId_ = clientPrixy.getLocalJvmInfo().getJvmid();
 
+        ret.stateLog_ = new ArrayList<JvmStateLog>();
+        
+        
         // ClassLoadingMXBean
         if (setClassLoadingMXBeanState(ret, clientPrixy) == false)
         {
@@ -138,6 +138,17 @@ public class JvmWatchState
         
         return ret;
     }
+    
+    
+    /**
+     * @param clientPrixy
+     * @return
+     */
+    public boolean addStateLog(JvmClientProxy clientPrixy)
+    {
+        return false;
+    }
+    
     
     /**
      * @param state
