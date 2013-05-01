@@ -62,7 +62,6 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
 import org.fluentd.jvmwatcher.LocalJvmInfo;
-import org.fluentd.jvmwatcher.data.JvmWatchState;
 import com.sun.management.HotSpotDiagnosticMXBean;
 
 
