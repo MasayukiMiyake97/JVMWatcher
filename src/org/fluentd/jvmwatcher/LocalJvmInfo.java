@@ -63,6 +63,10 @@ public class LocalJvmInfo
      */
     private int     jvmId_ = -1;
     /**
+     * The short process name for the log output.
+     */
+    private String  shortName_ = null;
+    /**
      * is JVM attach supported
      */
     private boolean isAttachSupported_ = false;
@@ -87,6 +91,7 @@ public class LocalJvmInfo
         this.isAttachSupported_ = canAttach;
         this.mbeanAddress_ = connectorAddress;
         this.displayName_ = getDisplayName(commandLine);
+        this.shortName_ = this.displayName_;
     }
     
     /**
@@ -368,6 +373,24 @@ public class LocalJvmInfo
         return (this.mbeanAddress_ != null);
     }
 
+    /**
+     * set short name.
+     * @param name
+     */
+    public void setShortName(String name)
+    {
+        this.shortName_ = name;
+    }
+    
+    /**
+     * get short name.
+     * @return
+     */
+    public String getShortName()
+    {
+        return this.shortName_;
+    }
+    
     /* (非 Javadoc)
      * @see java.lang.Object#toString()
      */

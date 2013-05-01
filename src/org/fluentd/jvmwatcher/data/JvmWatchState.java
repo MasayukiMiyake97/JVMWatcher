@@ -17,7 +17,10 @@
 //
 package org.fluentd.jvmwatcher.data;
 
-import java.lang.management.MemoryUsage;
+import java.io.IOException;
+import java.lang.management.CompilationMXBean;
+import java.lang.management.OperatingSystemMXBean;
+import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
 
 import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
@@ -46,7 +49,6 @@ public class JvmWatchState
          */
         END_PROCESS
     }
-
     
     /**
      * 
@@ -62,161 +64,277 @@ public class JvmWatchState
      */
     private String      displayName_ = null;
     /**
+     * Java program short name 
+     */
+    private String      shortName_ = null;
+    /**
      * Java VM ID (pid)
      */
     private int         jvmId_ = -1;
 
     // CompilationMXBean
     private String      jitName_ = null;
-    // MemoryMXBean
-    private MemoryUsage heapSize_ = null;
-    private MemoryUsage notheapSize_ = null;
-    private int         pendingFinalizationCount_ = 0;
     // OperatingSystemMXBean
     private String      osArch_ = null;
     private String      osName_ = null;
     private String      osVersion_ = null;
     // RuntimeMXBean
+    private long        jvmStartTime = -1L;
     private String      jvmRuntimeName = null;
+    private String      vmName = null;
+    private String      vmVender = null;
+    private String      vmVersion = null;
+    private String      specName = null;
+    private String      specVender = null;
+    private String      specVersion = null;
 
     private ArrayList<JvmStateLog>  stateLog_ = null;
+
     
-    
+    /**
+     * 
+     */
+    private JvmWatchState()
+    {
+        
+    }
     
     /**
      * @param clientPrixy
      * @return
      */
-    public static JvmWatchState makeJvmWatchState(JvmClientProxy clientPrixy)
+    public static JvmWatchState makeJvmWatchState(JvmClientProxy clientProxy)
     {
+        // null check
+        if (null == clientProxy)
+        {
+            return null;
+        }
+        if (null == clientProxy.getLocalJvmInfo())
+        {
+            return null;
+        }
+        
+        // create data object
         JvmWatchState   ret = new JvmWatchState();
         
         // set Local JVM Information
-        ret.commandLine_ = clientPrixy.getLocalJvmInfo().getCommandLine_();
-        ret.displayName_ = clientPrixy.getLocalJvmInfo().getDisplayName();
-        ret.jvmId_ = clientPrixy.getLocalJvmInfo().getJvmid();
+        ret.commandLine_ = clientProxy.getLocalJvmInfo().getCommandLine_();
+        ret.displayName_ = clientProxy.getLocalJvmInfo().getDisplayName();
+        ret.jvmId_ = clientProxy.getLocalJvmInfo().getJvmid();
+        ret.shortName_ = clientProxy.getLocalJvmInfo().getShortName();
 
+        // create log line array
         ret.stateLog_ = new ArrayList<JvmStateLog>();
-        
-        
-        // ClassLoadingMXBean
-        if (setClassLoadingMXBeanState(ret, clientPrixy) == false)
+
+        // set JVM information
+        try
         {
-            return null;
+            // CompilationMXBean
+            CompilationMXBean   compilationBean = clientProxy.getCompilationMXBean();
+            if (null != compilationBean)
+            {
+                ret.jitName_ = compilationBean.getName();
+            }
+
+            // OperatingSystemMXBean
+            OperatingSystemMXBean  OpeSysBean = clientProxy.getOperatingSystemMXBean();
+            if (null != OpeSysBean)
+            {
+                ret.osArch_ = OpeSysBean.getArch();
+                ret.osName_ = OpeSysBean.getName();
+                ret.osVersion_ = OpeSysBean.getVersion();
+            }
+            
+            // RuntimeMXBean
+            RuntimeMXBean  runtimeBean = clientProxy.getRuntimeMXBean();
+            if (null != runtimeBean)
+            {
+                ret.jvmStartTime = runtimeBean.getStartTime();
+                ret.jvmRuntimeName = runtimeBean.getName();
+                ret.vmName = runtimeBean.getVmName();
+                ret.vmVender = runtimeBean.getVmVendor();
+                ret.vmVersion = runtimeBean.getVmVersion();
+                ret.specName = runtimeBean.getSpecName();
+                ret.specVender = runtimeBean.getSpecVendor();
+                ret.specVersion = runtimeBean.getSpecVersion();
+            }
         }
-        // CompilationMXBean
-        if (setCompilationMXBeanState(ret, clientPrixy) == false)
+        catch (IOException ex)
         {
-            return null;
+            System.err.println(ex.toString());
+            // close JvmClientProxy
+            clientProxy.disconnect();
+            ret = null;
         }
-        // MemoryMXBean
-        if (setMemoryMXBeanState(ret, clientPrixy) == false)
-        {
-            return null;
-        }
-        // OperatingSystemMXBean
-        // com.sun.management.OperatingSystemMXBean
-        if (setOperatingSystemMXBeanState(ret, clientPrixy) == false)
-        {
-            return null;
-        }
-        // RuntimeMXBean
-        if (setRuntimeMXBeanState(ret, clientPrixy) == false)
-        {
-            return null;
-        }
-        // MemoryPoolMXBean
-        if (setMemoryPoolMXBeanState(ret, clientPrixy) == false)
-        {
-            return null;
-        }
-        // GarbageCollectorMXBean
-        if (setGarbageCollectorMXBeanState(ret, clientPrixy) == false)
-        {
-            return null;
-        }
-        
+
         return ret;
     }
     
-    
     /**
-     * @param clientPrixy
-     * @return
+     * @param stateLog
      */
-    public boolean addStateLog(JvmClientProxy clientPrixy)
+    public void addStateLog(JvmStateLog stateLog)
     {
-        return false;
+        if (this.stateLog_ != null)
+        {
+            this.stateLog_.add(stateLog);
+        }
     }
     
+    /**
+     * 
+     */
+    public void clearStateLog()
+    {
+        if (this.stateLog_ != null)
+        {
+            this.stateLog_.clear();
+        }
+    }
+
+    /**
+     * @return procState
+     */
+    public ProcessState getProcState()
+    {
+        return procState_;
+    }
+
+    /**
+     * @return commandLine
+     */
+    public String getCommandLine()
+    {
+        return commandLine_;
+    }
+
+    /**
+     * @return displayName
+     */
+    public String getDisplayName()
+    {
+        return displayName_;
+    }
+
+    /**
+     * @return shortName
+     */
+    public String getShortName()
+    {
+        return shortName_;
+    }
+
+    /**
+     * @return jvmId
+     */
+    public int getJvmId()
+    {
+        return jvmId_;
+    }
+
+    /**
+     * @return jitName
+     */
+    public String getJitName()
+    {
+        return jitName_;
+    }
+
+    /**
+     * @return osArch
+     */
+    public String getOsArch()
+    {
+        return osArch_;
+    }
+
+    /**
+     * @return osName
+     */
+    public String getOsName()
+    {
+        return osName_;
+    }
+
+    /**
+     * @return osVersion
+     */
+    public String getOsVersion()
+    {
+        return osVersion_;
+    }
+
+    /**
+     * @return jvmStartTime
+     */
+    public long getJvmStartTime()
+    {
+        return jvmStartTime;
+    }
+
+    /**
+     * @return jvmRuntimeName
+     */
+    public String getJvmRuntimeName()
+    {
+        return jvmRuntimeName;
+    }
+
+    /**
+     * @return vmName
+     */
+    public String getVmName()
+    {
+        return vmName;
+    }
+
+    /**
+     * @return vmVender
+     */
+    public String getVmVender()
+    {
+        return vmVender;
+    }
+
+    /**
+     * @return vmVersion
+     */
+    public String getVmVersion()
+    {
+        return vmVersion;
+    }
+
+    /**
+     * @return specName
+     */
+    public String getSpecName()
+    {
+        return specName;
+    }
+
+    /**
+     * @return specVender
+     */
+    public String getSpecVender()
+    {
+        return specVender;
+    }
+
+    /**
+     * @return specVersion
+     */
+    public String getSpecVersion()
+    {
+        return specVersion;
+    }
+
+    /**
+     * @return stateLog
+     */
+    public ArrayList<JvmStateLog> getStateLog()
+    {
+        return stateLog_;
+    }
     
-    /**
-     * @param state
-     * @param clientPrixy
-     * @return
-     */
-    private static boolean setClassLoadingMXBeanState(JvmWatchState state, JvmClientProxy clientPrixy)
-    {
-        return false;
-    }
-
-    /**
-     * @param state
-     * @param clientPrixy
-     * @return
-     */
-    private static boolean setCompilationMXBeanState(JvmWatchState state, JvmClientProxy clientPrixy)
-    {
-        return false;
-    }
-
-    /**
-     * @param state
-     * @param clientPrixy
-     * @return
-     */
-    private static boolean setMemoryMXBeanState(JvmWatchState state, JvmClientProxy clientPrixy)
-    {
-        return false;
-    }
-
-    /**
-     * @param state
-     * @param clientPrixy
-     * @return
-     */
-    private static boolean setOperatingSystemMXBeanState(JvmWatchState state, JvmClientProxy clientPrixy)
-    {
-        return false;
-    }
-
-    /**
-     * @param state
-     * @param clientPrixy
-     * @return
-     */
-    private static boolean setRuntimeMXBeanState(JvmWatchState state, JvmClientProxy clientPrixy)
-    {
-        return false;
-    }
-
-    /**
-     * @param state
-     * @param clientPrixy
-     * @return
-     */
-    private static boolean setMemoryPoolMXBeanState(JvmWatchState state, JvmClientProxy clientPrixy)
-    {
-        return false;
-    }
-
-    /**
-     * @param state
-     * @param clientPrixy
-     * @return
-     */
-    private static boolean setGarbageCollectorMXBeanState(JvmWatchState state, JvmClientProxy clientPrixy)
-    {
-        return false;
-    }
 }
