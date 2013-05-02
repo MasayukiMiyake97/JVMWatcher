@@ -66,6 +66,9 @@ public class JvmStateLog
     // GarbageCollectorMXBean
     private Collection<GarbageCollectorState>   gcCollectorState_ = null;
     
+    // CPU usage
+    private float       cpuUsage_ = 0.0F;
+    
     /**
      * 
      */
@@ -186,6 +189,22 @@ public class JvmStateLog
         }
         
         return ret;
+    }
+    
+    /**
+     * @param cpuUsage
+     */
+    public void setCpuUsage(float cpuUsage)
+    {
+        this.cpuUsage_ = cpuUsage;
+    }
+    
+    /**
+     * @return
+     */
+    public float getCpuUsage()
+    {
+        return this.cpuUsage_;
     }
 
     /**

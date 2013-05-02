@@ -90,6 +90,9 @@ public class JvmWatchState
 
     private ArrayList<JvmStateLog>  stateLog_ = null;
 
+    // CPU usage
+    private long        prevUpTime_ = 0L;
+    private long        prevProcessCpuTime_ = 0L;
     
     /**
      * 
@@ -178,8 +181,32 @@ public class JvmWatchState
     {
         if (this.stateLog_ != null)
         {
+            // calc CPU usage 
+            float   cpuUsage = this.calsCpuUsage(stateLog);
+            // set CPU usage
+            stateLog.setCpuUsage(cpuUsage);
+
             this.stateLog_.add(stateLog);
         }
+    }
+    
+    /**
+     * @param stateLog
+     * @return
+     */
+    private float calsCpuUsage(JvmStateLog stateLog)
+    {
+        long elapsedCpu = stateLog.getProcessCpuTime() - this.prevProcessCpuTime_;
+        long elapsedTime = stateLog.getJvmUpTime() - this.prevUpTime_;
+        
+        // calc CPU usage
+        float cpuUsage = Math.min(99F, elapsedCpu / (elapsedTime * 10000F * stateLog.getOsAvailableProcessors()));
+
+        // set old ProcessCpuTime and UpTime.
+        this.prevProcessCpuTime_ = stateLog.getProcessCpuTime();
+        this.prevUpTime_ = stateLog.getJvmUpTime();
+        
+        return cpuUsage;
     }
     
     /**
@@ -193,6 +220,14 @@ public class JvmWatchState
         }
     }
 
+    /**
+     * @param procState
+     */
+    public void setProcState(ProcessState procState)
+    {
+        this.procState_ = procState;
+    }
+    
     /**
      * @return procState
      */
