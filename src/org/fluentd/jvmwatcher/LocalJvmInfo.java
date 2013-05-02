@@ -122,14 +122,14 @@ public class LocalJvmInfo
     private static void getMonitoredJvms(Map<Integer, LocalJvmInfo> map)
     {
         MonitoredHost   monHost = null;
-        Set<Integer>     activVmsSet = null;
+        Set             activVmsSet = null;
 
         try 
         {
             // get monitored host jvms
             monHost = MonitoredHost.getMonitoredHost(new HostIdentifier((String)null));
             activVmsSet = monHost.activeVms();
-        } 
+        }
         catch (java.net.URISyntaxException sx) 
         {
             System.err.println(sx.toString());
