@@ -4,7 +4,10 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
 
 import org.fluentd.jvmwatcher.data.JvmWatchState;
 import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
@@ -85,5 +88,4 @@ public class JvmWatcherTest
                                " getVmVersion=" + state.getVmVersion());
         }
     }
-
 }
