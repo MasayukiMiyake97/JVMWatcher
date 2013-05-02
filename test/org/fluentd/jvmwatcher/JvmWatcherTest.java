@@ -68,7 +68,7 @@ public class JvmWatcherTest
     @Test
     public void testGetHostName()
     {
-        String  hostname = JvmWatcher.getHostName("unknown");
+        String  hostname = JvmWatcher.getHostName("test");
 
         assertNotNull(hostname);
         System.out.println("hostname=" + hostname);
