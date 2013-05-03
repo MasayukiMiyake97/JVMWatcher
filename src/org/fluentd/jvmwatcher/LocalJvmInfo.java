@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
@@ -75,6 +77,16 @@ public class LocalJvmInfo
      * Local JVM connect address.
      */
     private static final    String LOCAL_CONNECTOR_ADDRESS_PROP = "com.sun.management.jmxremote.localConnectorAddress";
+    
+    /**
+     * 
+     */
+    private static Pattern  myProcNamePattern_ = Pattern.compile("(org\\.fluentd\\.jvmwatcher\\.JvmWatcher)");
+    
+    /**
+     * 
+     */
+    private static Map<String, Pattern>     filterPassProcMap_ = new HashMap<String, Pattern>();
     
     /**
      * Constructor
@@ -164,7 +176,17 @@ public class LocalJvmInfo
                     System.err.println(ex.toString());
                 }
                 // put LocalJvmInfo
-                map.put((Integer) jvmid, new LocalJvmInfo(pid, name, attachable, address));
+                if (isMyProcess(name) != true)
+                {
+                    LocalJvmInfo    jvmInfo = new LocalJvmInfo(pid, name, attachable, address);
+                    // check target process
+                    jvmInfo = isTargetProcess(jvmInfo);
+
+                    if (null != jvmInfo)
+                    {
+                        map.put(pid, jvmInfo);
+                    }
+                }
             }
         }
     }
@@ -204,7 +226,17 @@ public class LocalJvmInfo
                         System.err.println(ioex.toString());
                     }
                     // put LocalJvmInfo
-                    map.put(vmid, new LocalJvmInfo(vmid.intValue(), vmd.displayName(), attachable, address));
+                    if (isMyProcess(vmd.displayName()) != true)
+                    {
+                        LocalJvmInfo    jvmInfo = new LocalJvmInfo(vmid, vmd.displayName(), attachable, address);
+                        // check target process
+                        jvmInfo = isTargetProcess(jvmInfo);
+
+                        if (null != jvmInfo)
+                        {
+                            map.put(vmid, jvmInfo);
+                        }
+                    }
                 }
             }
             catch (NumberFormatException numex)
@@ -235,6 +267,66 @@ public class LocalJvmInfo
            return displayName;
         }
         return commandLine;
+    }
+    
+    /**
+     * @param name
+     * @return
+     */
+    public static boolean isMyProcess(String name)
+    {
+        boolean     ret = false;
+        
+        Matcher     match = myProcNamePattern_.matcher(name);
+        
+        ret = match.find();
+        
+        return ret;
+    }
+
+    /**
+     * @param shortName
+     * @param patt
+     */
+    public static void addTargetProcessPattern(String shortName, Pattern patt)
+    {
+        filterPassProcMap_.put(shortName, patt);
+    }
+    
+    /**
+     * @param checkJvm
+     * @return
+     */
+    public static LocalJvmInfo isTargetProcess(LocalJvmInfo checkJvm)
+    {
+        LocalJvmInfo    ret = null;
+
+        /*
+         *  If the process name which is dealt with for the measurement isn't defining, 
+         *  it makes a measurement object unconditionally.
+         */
+        if (filterPassProcMap_.size() == 0)
+        {
+            return checkJvm;
+        }
+ 
+        // check process name
+        for(Map.Entry<String, Pattern> elem : filterPassProcMap_.entrySet())
+        {
+            String      key = elem.getKey();
+            Pattern     val = elem.getValue();
+            Matcher     match = val.matcher(checkJvm.displayName_);
+
+            // The process name which is dealt with for the measurement was found out.
+            if (match.find())
+            {
+                ret = checkJvm;
+                checkJvm.setShortName(key);
+                break;
+            }
+        }
+        
+        return ret;
     }
 
     /**

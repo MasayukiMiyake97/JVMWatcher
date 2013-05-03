@@ -43,4 +43,14 @@ public class LocalJvmInfoTest
         }
     }
 
+    @Test
+    public void testIsMyProcess()
+    {
+        assertTrue(LocalJvmInfo.isMyProcess("org.fluentd.jvmwatcher.JvmWatcher"));
+        assertFalse(LocalJvmInfo.isMyProcess("eclipse.jvmwatcher.JvmWatcher"));
+        assertTrue(LocalJvmInfo.isMyProcess("org.fluentd.jvmwatcher.JvmWatcher 125 3654 -5444 -a"));
+        assertTrue(LocalJvmInfo.isMyProcess("  org.fluentd.jvmwatcher.JvmWatcher   "));
+    }
+    
+    
 }

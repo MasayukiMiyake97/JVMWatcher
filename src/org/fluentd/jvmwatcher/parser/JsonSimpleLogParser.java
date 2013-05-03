@@ -51,6 +51,7 @@ public class JsonSimpleLogParser extends AbstractStateParser
             generator = jsonFactory.createGenerator(out);
             for (JvmWatchState elem : srcColl)
             {
+                // convert to JSON stream.
                 this.outSimpleLog(generator, elem);
             }
             ret = true;
@@ -66,8 +67,8 @@ public class JsonSimpleLogParser extends AbstractStateParser
             {
                 try
                 {
+                    // flush to JSON stream.
                     generator.flush();
-                    //generator.close();
                 }
                 catch (IOException ex)
                 {
@@ -89,6 +90,7 @@ public class JsonSimpleLogParser extends AbstractStateParser
     {
         ArrayList<JvmStateLog>  logArray = state.getStateLog();
         
+        // convert to JSON stream of JvmStateLog.
         for (JvmStateLog elem : logArray)
         {
             generator.writeStartObject();
@@ -105,15 +107,15 @@ public class JsonSimpleLogParser extends AbstractStateParser
             generator.writeNumberField(LOG_CPU_USAGE, elem.getCpuUsage());
             // Compilation
             generator.writeNumberField(LOG_COMPILE_TIME, elem.getCompileTime());
-            // class
+            // Class loading
             generator.writeNumberField(LOG_CLASS_LOAD_CNT, elem.getClassLoadedCount());
             generator.writeNumberField(LOG_CLASS_UNLOAD_CNT, elem.getClassUnloadedCount());
             generator.writeNumberField(LOG_CLASS_TOTAL_LOAD_CNT, elem.getClassTotalLoadedCount());
-            // thread
+            // Thread
             generator.writeNumberField(LOG_THREAD_CNT, elem.getThreadCount());
             generator.writeNumberField(LOG_DAEMON_TH_CNT, elem.getDaemonThreadCount());
             generator.writeNumberField(LOG_PEAK_TH_CNT, elem.getPeakThreadCount());
-            // memory
+            // Memory
             generator.writeNumberField(LOG_MEM_HEAP_INIT, elem.getHeapSize().getInit());
             generator.writeNumberField(LOG_MEM_HEAP_USED, elem.getHeapSize().getUsed());
             generator.writeNumberField(LOG_MEM_HEAP_COMMITED, elem.getHeapSize().getCommitted());
@@ -123,7 +125,7 @@ public class JsonSimpleLogParser extends AbstractStateParser
             generator.writeNumberField(LOG_MEM_NOTHEAP_COMMITED, elem.getNotheapSize().getCommitted());
             generator.writeNumberField(LOG_MEM_NOTHEAP_MAX, elem.getNotheapSize().getMax());
             generator.writeNumberField(LOG_MEM_PENDING_FIN_CNT, elem.getPendingFinalizationCount_());
-            // os
+            // OS Information
             generator.writeNumberField(LOG_OS_TOTAL_PHY_MEM_SIZE, elem.getTotalPhysicalMemorySize());
             generator.writeNumberField(LOG_OS_TOTAL_SWAP_MEM_SIZE, elem.getTotalSwapSpaceSize());
             generator.writeNumberField(LOG_OS_FREE_PHY_MEM_SIZE, elem.getFreePhysicalMemorySize());
