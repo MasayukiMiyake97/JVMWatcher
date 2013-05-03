@@ -30,7 +30,7 @@ import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
  * @author miyake
  *
  */
-public class JvmWatchState
+public final class JvmWatchState
 {
     /**
      *
@@ -58,44 +58,107 @@ public class JvmWatchState
     /**
      * Java program command line 
      */
-    private String      commandLine_ = null;
+    private String          commandLine_ = null;
     /**
      * Java program display name 
      */
-    private String      displayName_ = null;
+    private String          displayName_ = null;
     /**
      * Java program short name 
      */
-    private String      shortName_ = null;
+    private String          shortName_ = null;
     /**
      * Java VM ID (pid)
      */
-    private int         jvmId_ = -1;
+    private int             jvmId_ = -1;
 
     // CompilationMXBean
-    private String      jitName_ = null;
+    private String          jitName_ = null;
     // OperatingSystemMXBean
-    private String      osArch_ = null;
-    private String      osName_ = null;
-    private String      osVersion_ = null;
+    private String          osArch_ = null;
+    private String          osName_ = null;
+    private String          osVersion_ = null;
     // RuntimeMXBean
-    private long        jvmStartTime = -1L;
-    private String      jvmRuntimeName = null;
-    private String      vmName = null;
-    private String      vmVender = null;
-    private String      vmVersion = null;
-    private String      specName = null;
-    private String      specVender = null;
-    private String      specVersion = null;
+    private long            jvmStartTime_ = -1L;
+    private String          jvmRuntimeName_ = null;
+    private String          vmName_ = null;
+    private String          vmVender_ = null;
+    private String          vmVersion_ = null;
+    private String          specName_ = null;
+    private String          specVender_ = null;
+    private String          specVersion_ = null;
 
     private ArrayList<JvmStateLog>  stateLog_ = null;
 
     // CPU usage
-    private long        prevUpTime_ = 0L;
-    private long        prevProcessCpuTime_ = 0L;
+    private long            prevUpTime_ = 0L;
+    private long            prevProcessCpuTime_ = 0L;
+
     
     /**
+     * Constructor<BR>
+     * This constructor uses only by the unit test.
      * 
+     * @param procState
+     * @param commandLine
+     * @param displayName
+     * @param shortName
+     * @param jvmId
+     * @param jitName
+     * @param osArch
+     * @param osName
+     * @param osVersion
+     * @param jvmStartTime
+     * @param jvmRuntimeName
+     * @param vmName
+     * @param vmVender
+     * @param vmVersion
+     * @param specName
+     * @param specVender
+     * @param specVersion
+     * @param stateLog
+     */
+    public JvmWatchState(ProcessState procState,
+                         String commandLine,
+                         String displayName,
+                         String shortName,
+                         int jvmId,
+                         String jitName,
+                         String osArch,
+                         String osName,
+                         String osVersion,
+                         long jvmStartTime,
+                         String jvmRuntimeName,
+                         String vmName,
+                         String vmVender,
+                         String vmVersion,
+                         String specName,
+                         String specVender,
+                         String specVersion,
+                         ArrayList<JvmStateLog> stateLog)
+    {
+        this.procState_ = procState;
+        this.commandLine_ = commandLine;
+        this.displayName_ = displayName;
+        this.shortName_ = shortName;
+        this.jvmId_ = jvmId;
+        this.jitName_ = jitName;
+        this.osArch_ = osArch;
+        this.osName_ = osName;
+        this.osVersion_ = osVersion;
+        this.jvmStartTime_ = jvmStartTime;
+        this.jvmRuntimeName_ = jvmRuntimeName;
+        this.vmName_ = vmName;
+        this.vmVender_ = vmVender;
+        this.vmVersion_ = vmVersion;
+        this.specName_ = specName;
+        this.specVender_ = specVender;
+        this.specVersion_ = specVersion;
+        this.stateLog_ = stateLog;
+    }
+    
+    /**
+     * Default Constructor
      */
     private JvmWatchState()
     {
@@ -153,14 +216,14 @@ public class JvmWatchState
             RuntimeMXBean  runtimeBean = clientProxy.getRuntimeMXBean();
             if (null != runtimeBean)
             {
-                ret.jvmStartTime = runtimeBean.getStartTime();
-                ret.jvmRuntimeName = runtimeBean.getName();
-                ret.vmName = runtimeBean.getVmName();
-                ret.vmVender = runtimeBean.getVmVendor();
-                ret.vmVersion = runtimeBean.getVmVersion();
-                ret.specName = runtimeBean.getSpecName();
-                ret.specVender = runtimeBean.getSpecVendor();
-                ret.specVersion = runtimeBean.getSpecVersion();
+                ret.jvmStartTime_ = runtimeBean.getStartTime();
+                ret.jvmRuntimeName_ = runtimeBean.getName();
+                ret.vmName_ = runtimeBean.getVmName();
+                ret.vmVender_ = runtimeBean.getVmVendor();
+                ret.vmVersion_ = runtimeBean.getVmVersion();
+                ret.specName_ = runtimeBean.getSpecName();
+                ret.specVender_ = runtimeBean.getSpecVendor();
+                ret.specVersion_ = runtimeBean.getSpecVersion();
             }
         }
         catch (IOException ex)
@@ -227,7 +290,7 @@ public class JvmWatchState
     {
         this.procState_ = procState;
     }
-    
+
     /**
      * @return procState
      */
@@ -305,7 +368,7 @@ public class JvmWatchState
      */
     public long getJvmStartTime()
     {
-        return jvmStartTime;
+        return jvmStartTime_;
     }
 
     /**
@@ -313,7 +376,7 @@ public class JvmWatchState
      */
     public String getJvmRuntimeName()
     {
-        return jvmRuntimeName;
+        return jvmRuntimeName_;
     }
 
     /**
@@ -321,7 +384,7 @@ public class JvmWatchState
      */
     public String getVmName()
     {
-        return vmName;
+        return vmName_;
     }
 
     /**
@@ -329,7 +392,7 @@ public class JvmWatchState
      */
     public String getVmVender()
     {
-        return vmVender;
+        return vmVender_;
     }
 
     /**
@@ -337,7 +400,7 @@ public class JvmWatchState
      */
     public String getVmVersion()
     {
-        return vmVersion;
+        return vmVersion_;
     }
 
     /**
@@ -345,7 +408,7 @@ public class JvmWatchState
      */
     public String getSpecName()
     {
-        return specName;
+        return specName_;
     }
 
     /**
@@ -353,7 +416,7 @@ public class JvmWatchState
      */
     public String getSpecVender()
     {
-        return specVender;
+        return specVender_;
     }
 
     /**
@@ -361,7 +424,7 @@ public class JvmWatchState
      */
     public String getSpecVersion()
     {
-        return specVersion;
+        return specVersion_;
     }
 
     /**
@@ -371,5 +434,5 @@ public class JvmWatchState
     {
         return stateLog_;
     }
-    
+
 }

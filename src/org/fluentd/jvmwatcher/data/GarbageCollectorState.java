@@ -22,7 +22,7 @@ package org.fluentd.jvmwatcher.data;
  * @author miyake
  *
  */
-public class GarbageCollectorState
+public final class GarbageCollectorState
 {
     private String  memoryManagerName_ = null;
     private long    collectionCount_ = -1L;

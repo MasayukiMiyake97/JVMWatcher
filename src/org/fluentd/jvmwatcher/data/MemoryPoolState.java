@@ -24,7 +24,7 @@ import java.lang.management.MemoryUsage;
  * @author miyake
  *
  */
-public class MemoryPoolState
+public final class MemoryPoolState
 {
     private String      poolName_ = null;
     private long        usageThreshold_ = 0L;
