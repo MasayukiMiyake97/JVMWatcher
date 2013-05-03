@@ -21,7 +21,9 @@ public class JvmWatcherTest
     @Test
     public void testGetHostName()
     {
-        String  hostname = JvmWatcher.getHostName("test");
+        JvmWatcher  src = new JvmWatcher();
+        
+        String  hostname = src.getHostName("test");
 
         assertNotNull(hostname);
         System.out.println("hostname=" + hostname);

@@ -19,6 +19,13 @@ package org.fluentd.jvmwatcher;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import org.fluentd.jvmwatcher.data.JvmWatchState;
+import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
 
 /**
  * JVM Watcher Main Class
@@ -27,20 +34,58 @@ import java.net.UnknownHostException;
  */
 public class JvmWatcher
 {
-
+    private     Map<Integer, JvmWatchThread>    jvmProcessorMap_ = new HashMap<Integer, JvmWatchThread>();
+    private     OutputParseThread               jsonOutputParseTread_ = null;
+    private     BlockingQueue<JvmWatchState>    queue_ = new LinkedBlockingQueue<JvmWatchState>();
+    
     /**
      * @param args
      */
     public static void main(String[] args)
     {
+        // load configuration
+        
+        // load target filter
+        
+        // loop
+        
+        
+        
 
     }
 
     
     /**
+     * @param jvmInfo
      * @return
      */
-    public static String getHostName(String defaultName)
+    public int addJvmWatchThread(LocalJvmInfo jvmInfo)
+    {
+        return 0;
+    }
+    
+    /**
+     * @param pid
+     * @return
+     */
+    public int removeJvmWatchThread(int pid)
+    {
+        return 0;
+    }
+
+    /**
+     * 
+     */
+    public void runProcess()
+    {
+        
+    }
+    
+    
+    /**
+     * @return
+     */
+    public String getHostName(String defaultName)
     {
         String      ret = null;
         
@@ -58,5 +103,8 @@ public class JvmWatcher
         }
         return ret;
     }
+
+    
+    
     
 }

@@ -105,11 +105,14 @@ public class JvmWatchStateTest
         {
             for (JvmClientProxy elem : proxyArray_)
             {
+                long    startTime = System.currentTimeMillis();
                 JvmWatchState   state = JvmWatchState.makeJvmWatchState(elem);
+                long    endTime = System.currentTimeMillis();
                 assertNotNull(state);
                 
                 dataArray.add(state);
                 
+                System.out.println("makeJvmWatchState time=" + (endTime - startTime) + "(msec)");
                 System.out.println("-----------------------------------------------------");
                 System.out.println(" displayName=" + state.getDisplayName() + 
                                    " getVmName=" + state.getVmName() + 
@@ -117,13 +120,17 @@ public class JvmWatchStateTest
                                    " getVmVersion=" + state.getVmVersion());
 
                 // make JvmStateLog
+                startTime = System.currentTimeMillis();
                 JvmStateLog     log = JvmStateLog.makeJvmStateLog(elem);
+                endTime = System.currentTimeMillis();
+
                 assertNotNull(log);
                 assertNotNull(log.getNotheapSize());
                 assertNotNull(log.getHeapSize());
                 assertNotNull(log.getGcStateCollection());
                 assertNotNull(log.getMemoryPoolStateCollection());
 
+                System.out.println("makeJvmStateLog time=" + (endTime - startTime) + "(msec)");
                 // add state log 
                 state.addStateLog(log);
 
@@ -145,9 +152,11 @@ public class JvmWatchStateTest
                 e.printStackTrace();
             }
         }
+        long    startTime = System.currentTimeMillis();
         System.out.println("--parse---------------------------------------------------");
         parser.parseState(writer, dataArray);
-        System.out.println("--parse---------------------------------------------------");
+        long    endTime = System.currentTimeMillis();
+        System.out.println("--parse--- procTime = " + (endTime - startTime) + "(msec)");
     }
     
 }
