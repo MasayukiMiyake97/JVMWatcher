@@ -99,7 +99,7 @@ public class JvmWatchThread implements Runnable
             logBuffCnt++;
             // calc wait time
             long    procTime = System.currentTimeMillis() - startTime;
-            long    waitTime = watchInterval_ + procTime;
+            long    waitTime = watchInterval_ - procTime;
             
             this.watchState_.setProcState(ProcessState.LIVE_PROCESS);
             if (waitTime > 0)
