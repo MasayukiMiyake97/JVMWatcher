@@ -25,6 +25,7 @@ import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -49,6 +50,10 @@ public final class JvmStateLog
     private MemoryUsage heapSize_ = null;
     private MemoryUsage notheapSize_ = null;
     private int         pendingFinalizationCount_ = -1;
+    // ThreadMXBean
+    private int         threadCount_ = -1;
+    private int         daemonThreadCount_ = -1;
+    private int         peakThreadCount_ = -1;
     // OperatingSystemMXBean
     private int         osAvailableProcessors_ = 0;
     private double      osSystemLoadAverage_ = 0.0;
@@ -81,6 +86,9 @@ public final class JvmStateLog
      * @param heapSize
      * @param notheapSize
      * @param pendingFinalizationCount
+     * @param threadCount
+     * @param daemonThreadCount
+     * @param peakThreadCount
      * @param osAvailableProcessors
      * @param osSystemLoadAverage
      * @param committedVirtualMemorySize
@@ -102,6 +110,9 @@ public final class JvmStateLog
                         MemoryUsage heapSize,
                         MemoryUsage notheapSize,
                         int pendingFinalizationCount,
+                        int threadCount,
+                        int daemonThreadCount,
+                        int peakThreadCount,
                         int osAvailableProcessors,
                         double osSystemLoadAverage,
                         long committedVirtualMemorySize,
@@ -123,6 +134,9 @@ public final class JvmStateLog
         this.heapSize_ = heapSize;
         this.notheapSize_ = notheapSize;
         this.pendingFinalizationCount_ = pendingFinalizationCount;
+        this.threadCount_ = threadCount;
+        this.daemonThreadCount_ = daemonThreadCount;
+        this.peakThreadCount_ = peakThreadCount;
         this.osAvailableProcessors_ = osAvailableProcessors;
         this.osSystemLoadAverage_ = osSystemLoadAverage;
         this.committedVirtualMemorySize_ = committedVirtualMemorySize;
@@ -181,6 +195,15 @@ public final class JvmStateLog
                 ret.heapSize_ = memoryBean.getHeapMemoryUsage();
                 ret.notheapSize_ = memoryBean.getNonHeapMemoryUsage();
                 ret.pendingFinalizationCount_ = memoryBean.getObjectPendingFinalizationCount();
+            }
+
+            // ThreadMXBean
+            ThreadMXBean  threadBean = clientProxy.getThreadMXBean();
+            if (null != threadBean)
+            {
+                ret.threadCount_ = threadBean.getThreadCount();
+                ret.daemonThreadCount_ = threadBean.getDaemonThreadCount();
+                ret.peakThreadCount_ = threadBean.getPeakThreadCount();
             }
 
             // OperatingSystemMXBean
@@ -409,6 +432,30 @@ public final class JvmStateLog
     public long getJvmUpTime()
     {
         return jvmUpTime_;
+    }
+    
+    /**
+     * @return threadCount
+     */
+    public int getThreadCount()
+    {
+        return threadCount_;
+    }
+
+    /**
+     * @return daemonThreadCount
+     */
+    public int getDaemonThreadCount()
+    {
+        return daemonThreadCount_;
+    }
+
+    /**
+     * @return peakThreadCount
+     */
+    public int getPeakThreadCount()
+    {
+        return peakThreadCount_;
     }
 
     /**

@@ -6,11 +6,13 @@ package org.fluentd.jvmwatcher.data;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
 import org.fluentd.jvmwatcher.LocalJvmInfo;
+import org.fluentd.jvmwatcher.parser.JsonSimpleLogParser;
 import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -95,12 +97,18 @@ public class JvmWatchStateTest
     @Test
     public void testMakeJvmWatchState()
     {
+        JsonSimpleLogParser         parser = new JsonSimpleLogParser();
+        ArrayList<JvmWatchState>    dataArray = new ArrayList<JvmWatchState>();
+        PrintWriter                 writer = new PrintWriter(System.out);
+        
         for (int cnt = 0; cnt < 3; cnt++)
         {
             for (JvmClientProxy elem : proxyArray_)
             {
                 JvmWatchState   state = JvmWatchState.makeJvmWatchState(elem);
                 assertNotNull(state);
+                
+                dataArray.add(state);
                 
                 System.out.println("-----------------------------------------------------");
                 System.out.println(" displayName=" + state.getDisplayName() + 
@@ -128,7 +136,6 @@ public class JvmWatchStateTest
                         " Cpu Usage=" + log.getCpuUsage());
                 System.out.println("-----------------------------------------------------");
             }
-            
             try
             {
                 Thread.sleep(1000);
@@ -138,6 +145,9 @@ public class JvmWatchStateTest
                 e.printStackTrace();
             }
         }
+        System.out.println("--parse---------------------------------------------------");
+        parser.parseState(writer, dataArray);
+        System.out.println("--parse---------------------------------------------------");
     }
     
 }

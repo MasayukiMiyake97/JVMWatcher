@@ -17,9 +17,18 @@
 //
 package org.fluentd.jvmwatcher.parser;
 
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 
+import org.fluentd.jvmwatcher.data.GarbageCollectorState;
+import org.fluentd.jvmwatcher.data.JvmStateLog;
 import org.fluentd.jvmwatcher.data.JvmWatchState;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator;
 
 /**
  * @author miyake
@@ -32,9 +41,111 @@ public class JsonSimpleLogParser extends AbstractStateParser
      * @see org.fluentd.jvmwatcher.parser.AbstractStateParser#parseState(java.io.PrintWriter, org.fluentd.jvmwatcher.data.JvmWatchState)
      */
     @Override
-    public boolean parseState(PrintWriter out, JvmWatchState src)
+    public boolean parseState(PrintWriter out, Collection<JvmWatchState> srcColl)
     {
-        return false;
+        boolean         ret = false;
+        JsonFactory     jsonFactory = new JsonFactory();
+        JsonGenerator   generator = null;
+        try
+        {
+            generator = jsonFactory.createGenerator(out);
+            for (JvmWatchState elem : srcColl)
+            {
+                this.outSimpleLog(generator, elem);
+            }
+            ret = true;
+        }
+        catch (IOException ex)
+        {
+            System.err.println(ex.toString());
+            ret = false;
+        }
+        finally
+        {
+            if (null != generator)
+            {
+                try
+                {
+                    generator.flush();
+                    //generator.close();
+                }
+                catch (IOException ex)
+                {
+                    System.err.println("flush error. " + ex.toString());
+                }
+            }
+        }
+        
+        return ret;
+    }
+    
+    /**
+     * @param generator
+     * @param state
+     * @throws IOException 
+     * @throws JsonGenerationException 
+     */
+    private void outSimpleLog(JsonGenerator generator, JvmWatchState state) throws JsonGenerationException, IOException
+    {
+        ArrayList<JvmStateLog>  logArray = state.getStateLog();
+        
+        for (JvmStateLog elem : logArray)
+        {
+            generator.writeStartObject();
+            // Common 
+            generator.writeNumberField(LOG_DATETIME, elem.getLogDateTime());
+            generator.writeStringField(HOST_NAME, this.getHostName());
+            generator.writeStringField(PROC_STATE, state.getProcState().name());
+            generator.writeStringField(SHORT_NAME, state.getShortName());
+            generator.writeNumberField(JVM_ID, state.getJvmId());
+            // runtime
+            generator.writeNumberField(START_TIME, state.getJvmStartTime());
+            generator.writeNumberField(LOG_RUN_UP_TIME, elem.getJvmUpTime());
+            // cpu usage
+            generator.writeNumberField(LOG_CPU_USAGE, elem.getCpuUsage());
+            // Compilation
+            generator.writeNumberField(LOG_COMPILE_TIME, elem.getCompileTime());
+            // class
+            generator.writeNumberField(LOG_CLASS_LOAD_CNT, elem.getClassLoadedCount());
+            generator.writeNumberField(LOG_CLASS_UNLOAD_CNT, elem.getClassUnloadedCount());
+            generator.writeNumberField(LOG_CLASS_TOTAL_LOAD_CNT, elem.getClassTotalLoadedCount());
+            // thread
+            generator.writeNumberField(LOG_THREAD_CNT, elem.getThreadCount());
+            generator.writeNumberField(LOG_DAEMON_TH_CNT, elem.getDaemonThreadCount());
+            generator.writeNumberField(LOG_PEAK_TH_CNT, elem.getPeakThreadCount());
+            // memory
+            generator.writeNumberField(LOG_MEM_HEAP_INIT, elem.getHeapSize().getInit());
+            generator.writeNumberField(LOG_MEM_HEAP_USED, elem.getHeapSize().getUsed());
+            generator.writeNumberField(LOG_MEM_HEAP_COMMITED, elem.getHeapSize().getCommitted());
+            generator.writeNumberField(LOG_MEM_HEAP_MAX, elem.getHeapSize().getMax());
+            generator.writeNumberField(LOG_MEM_NOTHEAP_INIT, elem.getNotheapSize().getInit());
+            generator.writeNumberField(LOG_MEM_NOTHEAP_USED, elem.getNotheapSize().getUsed());
+            generator.writeNumberField(LOG_MEM_NOTHEAP_COMMITED, elem.getNotheapSize().getCommitted());
+            generator.writeNumberField(LOG_MEM_NOTHEAP_MAX, elem.getNotheapSize().getMax());
+            generator.writeNumberField(LOG_MEM_PENDING_FIN_CNT, elem.getPendingFinalizationCount_());
+            // os
+            generator.writeNumberField(LOG_OS_TOTAL_PHY_MEM_SIZE, elem.getTotalPhysicalMemorySize());
+            generator.writeNumberField(LOG_OS_TOTAL_SWAP_MEM_SIZE, elem.getTotalSwapSpaceSize());
+            generator.writeNumberField(LOG_OS_FREE_PHY_MEM_SIZE, elem.getFreePhysicalMemorySize());
+            generator.writeNumberField(LOG_OS_FREE_SWAP_MEM_SIZE, elem.getFreeSwapSpaceSize());
+            generator.writeNumberField(LOG_OS_COMMIT_VMEM_SIZE, elem.getCommittedVirtualMemorySize());
+            // GC INformation (Array output)
+            generator.writeFieldName(LOG_KEY_GC_COLLECT);
+            generator.writeStartArray();
+            Collection<GarbageCollectorState>   gcColl = elem.getGcStateCollection();
+            for (GarbageCollectorState gcElem : gcColl)
+            {
+                generator.writeStartObject();
+                generator.writeStringField(LOG_GC_MEM_MGR_NAME, gcElem.getMemoryManagerName());
+                generator.writeNumberField(LOG_GC_COLLECTION_CNT, gcElem.getCollectionCount());
+                generator.writeNumberField(LOG_GC_COLLECTION_TIME, gcElem.getCollectionTime());
+                generator.writeEndObject();
+            }
+            generator.writeEndArray();
+            
+            generator.writeEndObject();
+        }
+        
     }
 
 }
