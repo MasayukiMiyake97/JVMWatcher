@@ -77,26 +77,7 @@ public class JvmWatchStateTest
     @Test
     public void testAddStateLog()
     {
-        for (JvmClientProxy elem : proxyArray_)
-        {
-            JvmWatchState   state = JvmWatchState.makeJvmWatchState(elem);
-            assertNotNull(state);
-            
-            
-            
-            System.out.println(" displayName=" + state.getDisplayName() + 
-                               " getVmName=" + state.getVmName() + 
-                               " getVmVender=" + state.getVmVender() + 
-                               " getVmVersion=" + state.getVmVersion());
-        }
-    }
 
-    /**
-     * {@link org.fluentd.jvmwatcher.data.JvmWatchState#makeJvmWatchState(org.fluentd.jvmwatcher.proxy.JvmClientProxy)} のためのテスト・メソッド。
-     */
-    @Test
-    public void testMakeJvmWatchState()
-    {
         JsonSimpleLogParser         parser = new JsonSimpleLogParser();
         ArrayList<JvmWatchState>    dataArray = new ArrayList<JvmWatchState>();
         PrintWriter                 writer = new PrintWriter(System.out);
@@ -157,6 +138,43 @@ public class JvmWatchStateTest
         parser.parseState(writer, dataArray);
         long    endTime = System.currentTimeMillis();
         System.out.println("--parse--- procTime = " + (endTime - startTime) + "(msec)");
+    }
+
+    /**
+     * {@link org.fluentd.jvmwatcher.data.JvmWatchState#makeJvmWatchState(org.fluentd.jvmwatcher.proxy.JvmClientProxy)} のためのテスト・メソッド。
+     */
+    @Test
+    public void testMakeJvmWatchState()
+    {
+        for (JvmClientProxy elem : proxyArray_)
+        {
+            JvmWatchState   state = JvmWatchState.makeJvmWatchState(elem);
+            assertNotNull(state);
+            
+            
+            
+            System.out.println(" displayName=" + state.getDisplayName() + 
+                               " getVmName=" + state.getVmName() + 
+                               " getVmVender=" + state.getVmVender() + 
+                               " getVmVersion=" + state.getVmVersion());
+        }
+    }
+
+    @Test
+    public void testClone()
+    {
+        for (JvmClientProxy elem : proxyArray_)
+        {
+            JvmWatchState   state = JvmWatchState.makeJvmWatchState(elem);
+            assertNotNull(state);
+
+            JvmWatchState   clone = state.clone();
+            
+            assertNotNull(clone);
+            assertNotSame(state,clone);
+            assertEquals(state.getJitName(), clone.getJitName());
+        }
+        
     }
     
 }

@@ -88,7 +88,7 @@ public class JsonSimpleLogParser extends AbstractStateParser
      */
     private void outSimpleLog(JsonGenerator generator, JvmWatchState state) throws JsonGenerationException, IOException
     {
-        ArrayList<JvmStateLog>  logArray = state.getStateLog();
+        Collection<JvmStateLog>  logArray = state.getStateLog();
         
         // convert to JSON stream of JvmStateLog.
         for (JvmStateLog elem : logArray)

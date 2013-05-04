@@ -22,6 +22,7 @@ import java.lang.management.CompilationMXBean;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
 
@@ -30,7 +31,7 @@ import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
  * @author miyake
  *
  */
-public final class JvmWatchState
+public final class JvmWatchState implements Cloneable
 {
     /**
      *
@@ -88,7 +89,7 @@ public final class JvmWatchState
     private String          specVender_ = null;
     private String          specVersion_ = null;
 
-    private ArrayList<JvmStateLog>  stateLog_ = null;
+    private Collection<JvmStateLog>     stateLog_ = null;
 
     // CPU usage
     private long            prevUpTime_ = 0L;
@@ -430,9 +431,49 @@ public final class JvmWatchState
     /**
      * @return stateLog
      */
-    public ArrayList<JvmStateLog> getStateLog()
+    public Collection<JvmStateLog> getStateLog()
     {
         return stateLog_;
     }
 
+    /* (非 Javadoc)
+     * @see java.lang.Object#clone()
+     */
+    public JvmWatchState clone()
+    {
+        JvmWatchState   ret = null;
+        try
+        {
+            ret = (JvmWatchState)super.clone();
+            
+            // value copy
+            ret.commandLine_ = this.commandLine_;
+            ret.displayName_ = this.displayName_;
+            ret.jitName_ = this.jitName_;
+            ret.jvmId_ = this.jvmId_;
+            ret.jvmRuntimeName_ = this.jvmRuntimeName_;
+            ret.jvmStartTime_ = this.jvmStartTime_;
+            ret.osArch_ = this.osArch_;
+            ret.osName_ = this.osName_;
+            ret.osVersion_ = this.osVersion_;
+            ret.prevProcessCpuTime_ = this.prevProcessCpuTime_;
+            ret.prevUpTime_ = this.prevUpTime_;
+            ret.procState_ = this.procState_;
+            ret.shortName_ = this.shortName_;
+            ret.specName_ = this.specName_;
+            ret.specVender_ = this.specVender_;
+            ret.specVersion_ = this.specVersion_;
+            ret.stateLog_ = new ArrayList<JvmStateLog>(this.stateLog_);
+            ret.vmName_ = this.vmName_;
+            ret.vmVender_ = this.vmVender_;
+            ret.vmVersion_ = this.vmVersion_;
+        }
+        catch (CloneNotSupportedException ex)
+        {
+            throw new RuntimeException(ex);
+        }
+        
+        return ret;
+    }
+    
 }
