@@ -21,7 +21,7 @@ import java.util.concurrent.BlockingQueue;
 
 import org.fluentd.jvmwatcher.data.JvmStateLog;
 import org.fluentd.jvmwatcher.data.JvmWatchState;
-import org.fluentd.jvmwatcher.data.JvmWatchState.ProcessState;
+import org.fluentd.jvmwatcher.data.JvmStateLog.ProcessState;
 import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
 
 /**
@@ -35,7 +35,7 @@ public class JvmWatchThread implements Runnable
     private     JvmClientProxy                  jvmClient_ = null;
     
     private     long        watchInterval_ = 1000L; // msec
-    private     int         logBuffNum_ = 1;
+    private     int         logBuffNum_ = 3;
     
     private     JvmWatchState   watchState_ = null;
     private     JvmWatcher      parent_ = null;
@@ -79,34 +79,36 @@ public class JvmWatchThread implements Runnable
     @Override
     public void run()
     {
-        boolean     isProcess = true;
-        int         logBuffCnt = 0;
+        boolean         isProcess = true;
+        int             logBuffCnt = 0;
+        ProcessState    procState = ProcessState.START_PROCESS;
         
         // JVM watch start
         this.watchState_ = JvmWatchState.makeJvmWatchState(this.jvmClient_);
-        if (null == this.watchState_)
+        // disconnect
+        if (this.jvmClient_.isConnect() == false)
         {
             return ;
         }
-        // set start flag
-        this.watchState_.setProcState(ProcessState.START_PROCESS);
         
         while (isProcess)
         {
             long    startTime = System.currentTimeMillis();
             JvmStateLog     stateLog = JvmStateLog.makeJvmStateLog(this.jvmClient_);
+            
+            //  set JVM Process state
+            stateLog.setProcState(procState);
+            
             // disconnect
             if (this.jvmClient_.isConnect() == false)
             {
                 // set end flag
-                this.watchState_.setProcState(ProcessState.END_PROCESS);
+                stateLog.setProcState(ProcessState.END_PROCESS);
                 isProcess = false;
             }
-            else
-            {
-                // add JvmStateLog
-                this.watchState_.addStateLog(stateLog);
-            }
+
+            // add JvmStateLog
+            this.watchState_.addStateLog(stateLog);
             
             // parse JSON & output stream
             logBuffCnt++;
@@ -128,12 +130,15 @@ public class JvmWatchThread implements Runnable
                 this.watchState_.clearStateLog();
                 logBuffCnt = 0;
             }
+            
+            // next Process State
+            procState = ProcessState.LIVE_PROCESS;
 
             // calc wait time
             long    procTime = System.currentTimeMillis() - startTime;
             long    waitTime = watchInterval_ - procTime;
-            
-            this.watchState_.setProcState(ProcessState.LIVE_PROCESS);
+
+            // wait to next process.
             if (waitTime > 0)
             {
                 try
@@ -146,6 +151,8 @@ public class JvmWatchThread implements Runnable
                 }
             }
         }
+        // reject this JvmWatchThread.
+        this.parent_.removeJvmWatchThread(pid_);
     }
 
 }

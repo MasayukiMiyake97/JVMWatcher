@@ -185,7 +185,6 @@ public class JvmWatchStateTest
             assertEquals(state.getOsArch(), clone.getOsArch());
             assertEquals(state.getOsName(), clone.getOsName());
             assertEquals(state.getOsVersion(), clone.getOsVersion());
-            assertEquals(state.getProcState(), clone.getProcState());
             assertEquals(state.getShortName(), clone.getShortName());
             assertEquals(state.getSpecName(), clone.getSpecName());
             assertEquals(state.getSpecVender(), clone.getSpecVender());

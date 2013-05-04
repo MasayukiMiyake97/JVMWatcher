@@ -38,7 +38,33 @@ import org.fluentd.jvmwatcher.proxy.MemoryPoolClientProxy;
  */
 public final class JvmStateLog
 {
-    private long        logDateTime_ = 0L;    
+    /**
+    *
+    */
+   public enum ProcessState {
+       /**
+        * 
+        */
+       START_PROCESS,
+       /**
+        * 
+        */
+       LIVE_PROCESS,
+       /**
+        * 
+        */
+       END_PROCESS
+   }
+   
+   /**
+    * 
+    */
+   private ProcessState    procState_ = ProcessState.LIVE_PROCESS;
+    
+    /**
+     * 
+     */
+    private long        logDateTime_ = 0L;
     
     // ClassLoadingMXBean
     private int         classLoadedCount_ = -1;
@@ -78,6 +104,7 @@ public final class JvmStateLog
      * Constructor<BR>
      * This constructor uses only by the unit test.
      * 
+     * @param procState
      * @param logDateTime
      * @param classLoadedCount
      * @param classUnloadedCount
@@ -102,7 +129,8 @@ public final class JvmStateLog
      * @param gcCollectorState
      * @param cpuUsage
      */
-    private JvmStateLog(long logDateTime,    
+    private JvmStateLog(ProcessState procState,
+                        long logDateTime,    
                         int classLoadedCount,
                         long classUnloadedCount,
                         long classTotalLoadedCount,
@@ -126,6 +154,7 @@ public final class JvmStateLog
                         Collection<GarbageCollectorState> gcCollectorState,
                         float cpuUsage)
     {
+        this.procState_ = procState;
         this.logDateTime_ = logDateTime;
         this.classLoadedCount_ = classLoadedCount;
         this.classUnloadedCount_ = classUnloadedCount;
@@ -276,10 +305,31 @@ public final class JvmStateLog
             System.err.println(ex.toString());
             // close JvmClientProxy
             clientProxy.disconnect();
-            ret = null;
+        }
+        catch (Exception ex)
+        {
+            System.err.println(ex.toString());
+            // close JvmClientProxy
+            clientProxy.disconnect();
         }
         
         return ret;
+    }
+
+    /**
+     * @param procState
+     */
+    public void setProcState(ProcessState procState)
+    {
+        this.procState_ = procState;
+    }
+
+    /**
+     * @return procState
+     */
+    public ProcessState getProcState()
+    {
+        return procState_;
     }
     
     /**

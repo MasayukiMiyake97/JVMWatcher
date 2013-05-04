@@ -34,29 +34,6 @@ import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
 public final class JvmWatchState implements Cloneable
 {
     /**
-     *
-     */
-    public enum ProcessState {
-        /**
-         * 
-         */
-        START_PROCESS,
-        /**
-         * 
-         */
-        LIVE_PROCESS,
-        /**
-         * 
-         */
-        END_PROCESS
-    }
-    
-    /**
-     * 
-     */
-    private ProcessState    procState_ = ProcessState.LIVE_PROCESS;
-    
-    /**
      * Java program command line 
      */
     private String          commandLine_ = null;
@@ -119,8 +96,7 @@ public final class JvmWatchState implements Cloneable
      * @param specVersion
      * @param stateLog
      */
-    public JvmWatchState(ProcessState procState,
-                         String commandLine,
+    public JvmWatchState(String commandLine,
                          String displayName,
                          String shortName,
                          int jvmId,
@@ -138,7 +114,6 @@ public final class JvmWatchState implements Cloneable
                          String specVersion,
                          ArrayList<JvmStateLog> stateLog)
     {
-        this.procState_ = procState;
         this.commandLine_ = commandLine;
         this.displayName_ = displayName;
         this.shortName_ = shortName;
@@ -232,7 +207,12 @@ public final class JvmWatchState implements Cloneable
             System.err.println(ex.toString());
             // close JvmClientProxy
             clientProxy.disconnect();
-            ret = null;
+        }
+        catch (Exception ex)
+        {
+            System.err.println(ex.toString());
+            // close JvmClientProxy
+            clientProxy.disconnect();
         }
 
         return ret;
@@ -282,22 +262,6 @@ public final class JvmWatchState implements Cloneable
         {
             this.stateLog_.clear();
         }
-    }
-
-    /**
-     * @param procState
-     */
-    public void setProcState(ProcessState procState)
-    {
-        this.procState_ = procState;
-    }
-
-    /**
-     * @return procState
-     */
-    public ProcessState getProcState()
-    {
-        return procState_;
     }
 
     /**
@@ -458,7 +422,6 @@ public final class JvmWatchState implements Cloneable
             ret.osVersion_ = this.osVersion_;
             ret.prevProcessCpuTime_ = this.prevProcessCpuTime_;
             ret.prevUpTime_ = this.prevUpTime_;
-            ret.procState_ = this.procState_;
             ret.shortName_ = this.shortName_;
             ret.specName_ = this.specName_;
             ret.specVender_ = this.specVender_;

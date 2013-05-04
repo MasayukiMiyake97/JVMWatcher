@@ -19,13 +19,11 @@ package org.fluentd.jvmwatcher.parser;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.fluentd.jvmwatcher.data.GarbageCollectorState;
 import org.fluentd.jvmwatcher.data.JvmStateLog;
 import org.fluentd.jvmwatcher.data.JvmWatchState;
-import org.fluentd.jvmwatcher.data.JvmWatchState.ProcessState;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -95,7 +93,7 @@ public class JsonSimpleLogParser extends AbstractStateParser
             // Common 
             generator.writeNumberField(LOG_DATETIME, elem.getLogDateTime());
             generator.writeStringField(HOST_NAME, this.getHostName());
-            generator.writeStringField(PROC_STATE, state.getProcState().name());
+            generator.writeStringField(PROC_STATE, elem.getProcState().name());
             generator.writeStringField(SHORT_NAME, state.getShortName());
             generator.writeNumberField(JVM_ID, state.getJvmId());
             // runtime
@@ -114,14 +112,20 @@ public class JsonSimpleLogParser extends AbstractStateParser
             generator.writeNumberField(LOG_DAEMON_TH_CNT, elem.getDaemonThreadCount());
             generator.writeNumberField(LOG_PEAK_TH_CNT, elem.getPeakThreadCount());
             // Memory
-            generator.writeNumberField(LOG_MEM_HEAP_INIT, elem.getHeapSize().getInit());
-            generator.writeNumberField(LOG_MEM_HEAP_USED, elem.getHeapSize().getUsed());
-            generator.writeNumberField(LOG_MEM_HEAP_COMMITED, elem.getHeapSize().getCommitted());
-            generator.writeNumberField(LOG_MEM_HEAP_MAX, elem.getHeapSize().getMax());
-            generator.writeNumberField(LOG_MEM_NOTHEAP_INIT, elem.getNotheapSize().getInit());
-            generator.writeNumberField(LOG_MEM_NOTHEAP_USED, elem.getNotheapSize().getUsed());
-            generator.writeNumberField(LOG_MEM_NOTHEAP_COMMITED, elem.getNotheapSize().getCommitted());
-            generator.writeNumberField(LOG_MEM_NOTHEAP_MAX, elem.getNotheapSize().getMax());
+            if (elem.getHeapSize() != null)
+            {
+                generator.writeNumberField(LOG_MEM_HEAP_INIT, elem.getHeapSize().getInit());
+                generator.writeNumberField(LOG_MEM_HEAP_USED, elem.getHeapSize().getUsed());
+                generator.writeNumberField(LOG_MEM_HEAP_COMMITED, elem.getHeapSize().getCommitted());
+                generator.writeNumberField(LOG_MEM_HEAP_MAX, elem.getHeapSize().getMax());
+            }
+            if (elem.getNotheapSize() != null)
+            {
+                generator.writeNumberField(LOG_MEM_NOTHEAP_INIT, elem.getNotheapSize().getInit());
+                generator.writeNumberField(LOG_MEM_NOTHEAP_USED, elem.getNotheapSize().getUsed());
+                generator.writeNumberField(LOG_MEM_NOTHEAP_COMMITED, elem.getNotheapSize().getCommitted());
+                generator.writeNumberField(LOG_MEM_NOTHEAP_MAX, elem.getNotheapSize().getMax());
+            }
             generator.writeNumberField(LOG_MEM_PENDING_FIN_CNT, elem.getPendingFinalizationCount_());
             // OS Information
             generator.writeNumberField(LOG_OS_TOTAL_PHY_MEM_SIZE, elem.getTotalPhysicalMemorySize());
@@ -129,22 +133,26 @@ public class JsonSimpleLogParser extends AbstractStateParser
             generator.writeNumberField(LOG_OS_FREE_PHY_MEM_SIZE, elem.getFreePhysicalMemorySize());
             generator.writeNumberField(LOG_OS_FREE_SWAP_MEM_SIZE, elem.getFreeSwapSpaceSize());
             generator.writeNumberField(LOG_OS_COMMIT_VMEM_SIZE, elem.getCommittedVirtualMemorySize());
-            // GC INformation (Array output)
-            generator.writeFieldName(LOG_KEY_GC_COLLECT);
-            generator.writeStartArray();
+
             Collection<GarbageCollectorState>   gcColl = elem.getGcStateCollection();
-            for (GarbageCollectorState gcElem : gcColl)
+            if (null != gcColl)
             {
-                generator.writeStartObject();
-                generator.writeStringField(LOG_GC_MEM_MGR_NAME, gcElem.getMemoryManagerName());
-                generator.writeNumberField(LOG_GC_COLLECTION_CNT, gcElem.getCollectionCount());
-                generator.writeNumberField(LOG_GC_COLLECTION_TIME, gcElem.getCollectionTime());
-                generator.writeEndObject();
+                // GC INformation (Array output)
+                generator.writeFieldName(LOG_KEY_GC_COLLECT);
+                generator.writeStartArray();
+                for (GarbageCollectorState gcElem : gcColl)
+                {
+                    generator.writeStartObject();
+                    generator.writeStringField(LOG_GC_MEM_MGR_NAME, gcElem.getMemoryManagerName());
+                    generator.writeNumberField(LOG_GC_COLLECTION_CNT, gcElem.getCollectionCount());
+                    generator.writeNumberField(LOG_GC_COLLECTION_TIME, gcElem.getCollectionTime());
+                    generator.writeEndObject();
+                }
+                generator.writeEndArray();
             }
-            generator.writeEndArray();
+            
             generator.writeEndObject();
         }
-        
     }
 
 }

@@ -17,8 +17,6 @@
 //
 package org.fluentd.jvmwatcher;
 
-import static org.junit.Assert.assertFalse;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -42,7 +40,7 @@ public class JvmWatcher
     private     OutputParseThread               jsonOutputParseTread_ = null;
     private     BlockingQueue<JvmWatchState>    queue_ = new LinkedBlockingQueue<JvmWatchState>();
     
-    private     long        refindJvmInterval_ = 60000L;
+    private     long        refindJvmInterval_ = 20000L;
     
     /**
      * @param args
