@@ -25,6 +25,7 @@ import java.util.Collection;
 import org.fluentd.jvmwatcher.data.GarbageCollectorState;
 import org.fluentd.jvmwatcher.data.JvmStateLog;
 import org.fluentd.jvmwatcher.data.JvmWatchState;
+import org.fluentd.jvmwatcher.data.JvmWatchState.ProcessState;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -41,7 +42,7 @@ public class JsonSimpleLogParser extends AbstractStateParser
      * @see org.fluentd.jvmwatcher.parser.AbstractStateParser#parseState(java.io.PrintWriter, org.fluentd.jvmwatcher.data.JvmWatchState)
      */
     @Override
-    public boolean parseState(PrintWriter out, Collection<JvmWatchState> srcColl)
+    public boolean parseState(PrintWriter out, JvmWatchState state)
     {
         boolean         ret = false;
         JsonFactory     jsonFactory = new JsonFactory();
@@ -49,11 +50,8 @@ public class JsonSimpleLogParser extends AbstractStateParser
         try
         {
             generator = jsonFactory.createGenerator(out);
-            for (JvmWatchState elem : srcColl)
-            {
-                // convert to JSON stream.
-                this.outSimpleLog(generator, elem);
-            }
+            // convert to JSON stream.
+            this.outSimpleLog(generator, state);
             ret = true;
         }
         catch (IOException ex)
@@ -146,6 +144,12 @@ public class JsonSimpleLogParser extends AbstractStateParser
             generator.writeEndArray();
             
             generator.writeEndObject();
+
+            // change to LIVE_PROCESS
+            if (state.getProcState() == ProcessState.START_PROCESS)
+            {
+                state.setProcState(ProcessState.LIVE_PROCESS);
+            }
         }
         
     }

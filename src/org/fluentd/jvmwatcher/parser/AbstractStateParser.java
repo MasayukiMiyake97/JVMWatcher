@@ -152,5 +152,5 @@ public abstract class AbstractStateParser
      * @param src
      * @return
      */
-    public abstract boolean parseState(PrintWriter out, Collection<JvmWatchState> srcColl);
+    public abstract boolean parseState(PrintWriter out, JvmWatchState state);
 }

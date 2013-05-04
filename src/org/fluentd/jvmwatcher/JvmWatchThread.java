@@ -39,18 +39,38 @@ public class JvmWatchThread implements Runnable
     
     private     JvmWatchState   watchState_ = null;
     private     JvmWatcher      parent_ = null;
-
+    private     int             pid_ = -1;;
     
+    /**
+     * 
+     */
     private JvmWatchThread()
     {
         
     }
     
-    public JvmWatchThread(JvmWatcher parent)
+    /**
+     * @param parent
+     * @param queue
+     * @param proxy
+     */
+    public JvmWatchThread(JvmWatcher parent, BlockingQueue<JvmWatchState> queue, JvmClientProxy proxy)
     {
         this.parent_ = parent;
+        this.queue_ = queue;
+        this.jvmClient_ = proxy;
         
-        // set param
+        this.pid_ = this.jvmClient_.getLocalJvmInfo().getJvmid();
+    }
+    
+    /**
+     * @param interval
+     * @param buffNum
+     */
+    public void setInterval(long interval, int buffNum)
+    {
+        this.watchInterval_ = interval;
+        this.logBuffNum_ = buffNum;
     }
     
     /* (非 Javadoc)
@@ -89,14 +109,26 @@ public class JvmWatchThread implements Runnable
             }
             
             // parse JSON & output stream
+            logBuffCnt++;
             if ((logBuffCnt >= logBuffNum_) || (isProcess == false))
             {
-                // call parse 
-                // BlockingQueueでパーサスレッドに処理させるかどうかが悩みどころ
+                // call parse
+                // create clone
+                JvmWatchState   sendState = this.watchState_.clone();
+                try
+                {
+                    // send to parser
+                    this.queue_.put(sendState);
+                }
+                catch (InterruptedException e)
+                {
+                    isProcess = false;
+                }
+                // clear StateLog
+                this.watchState_.clearStateLog();
                 logBuffCnt = 0;
             }
-            
-            logBuffCnt++;
+
             // calc wait time
             long    procTime = System.currentTimeMillis() - startTime;
             long    waitTime = watchInterval_ - procTime;

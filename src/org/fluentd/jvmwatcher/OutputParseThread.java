@@ -17,20 +17,55 @@
 //
 package org.fluentd.jvmwatcher;
 
+import java.io.PrintWriter;
+import java.util.concurrent.BlockingQueue;
+import org.fluentd.jvmwatcher.data.JvmWatchState;
+import org.fluentd.jvmwatcher.parser.AbstractStateParser;
+
 /**
  * @author miyake
  *
  */
 public class OutputParseThread implements Runnable
 {
+    private     BlockingQueue<JvmWatchState>    queue_ = null;
+    private     JvmWatcher              parent_ = null;
+    private     AbstractStateParser     parser_ = null;
 
+    /**
+     * @param parent
+     * @param queue
+     * @param parser
+     */
+    public OutputParseThread(JvmWatcher parent, BlockingQueue<JvmWatchState> queue, AbstractStateParser parser)
+    {
+        this.parent_ = parent;
+        this.queue_ = queue;
+        this.parser_ = parser;
+        // set host name
+        this.parser_.setHostName(this.parser_.getHostName());
+    }
+    
     /* (非 Javadoc)
      * @see java.lang.Runnable#run()
      */
     @Override
     public void run()
     {
-
+        PrintWriter     writer = new PrintWriter(System.out);
+        while (true)
+        {
+            try
+            {
+                JvmWatchState   state = this.queue_.take();
+                // parse Log
+                this.parser_.parseState(writer, state);
+            }
+            catch (InterruptedException ex)
+            {
+                break ;
+            }
+        }
     }
 
 }

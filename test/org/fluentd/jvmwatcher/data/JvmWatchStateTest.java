@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
@@ -135,7 +136,10 @@ public class JvmWatchStateTest
         }
         long    startTime = System.currentTimeMillis();
         System.out.println("--parse---------------------------------------------------");
-        parser.parseState(writer, dataArray);
+        for (JvmWatchState elem : dataArray)
+        {
+            parser.parseState(writer, elem);
+        }
         long    endTime = System.currentTimeMillis();
         System.out.println("--parse--- procTime = " + (endTime - startTime) + "(msec)");
     }
@@ -172,7 +176,25 @@ public class JvmWatchStateTest
             
             assertNotNull(clone);
             assertNotSame(state,clone);
+            assertEquals(state.getCommandLine(), clone.getCommandLine());
+            assertEquals(state.getDisplayName(), clone.getDisplayName());
             assertEquals(state.getJitName(), clone.getJitName());
+            assertEquals(state.getJvmId(), clone.getJvmId());
+            assertEquals(state.getJvmRuntimeName(), clone.getJvmRuntimeName());
+            assertEquals(state.getJvmStartTime(), clone.getJvmStartTime());
+            assertEquals(state.getOsArch(), clone.getOsArch());
+            assertEquals(state.getOsName(), clone.getOsName());
+            assertEquals(state.getOsVersion(), clone.getOsVersion());
+            assertEquals(state.getProcState(), clone.getProcState());
+            assertEquals(state.getShortName(), clone.getShortName());
+            assertEquals(state.getSpecName(), clone.getSpecName());
+            assertEquals(state.getSpecVender(), clone.getSpecVender());
+            assertEquals(state.getSpecVersion(), clone.getSpecVersion());
+            assertEquals(state.getVmName(), clone.getVmName());
+            assertEquals(state.getVmVender(), clone.getVmVender());
+            assertEquals(state.getVmVersion(), clone.getVmVersion());
+            assertNotSame(state.getStateLog(), clone.getStateLog());
+            
         }
         
     }
