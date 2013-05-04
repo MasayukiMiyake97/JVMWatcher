@@ -19,6 +19,8 @@ package org.fluentd.jvmwatcher;
 
 import java.util.concurrent.BlockingQueue;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.fluentd.jvmwatcher.data.JvmStateLog;
 import org.fluentd.jvmwatcher.data.JvmWatchState;
 import org.fluentd.jvmwatcher.data.JvmStateLog.ProcessState;
@@ -30,6 +32,7 @@ import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
  */
 public class JvmWatchThread implements Runnable
 {
+    private static  Log log = LogFactory.getLog(JvmWatchThread.class);
     
     private     BlockingQueue<JvmWatchState>    queue_ = null;
     private     JvmClientProxy                  jvmClient_ = null;
@@ -124,6 +127,7 @@ public class JvmWatchThread implements Runnable
                 }
                 catch (InterruptedException e)
                 {
+                    log.error(e);
                     isProcess = false;
                 }
                 // clear StateLog
@@ -147,7 +151,7 @@ public class JvmWatchThread implements Runnable
                 }
                 catch (InterruptedException ex)
                 {
-                    System.err.println(ex.toString());
+                    log.error(ex);
                 }
             }
         }

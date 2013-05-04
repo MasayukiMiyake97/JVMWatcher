@@ -27,6 +27,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 import com.sun.tools.attach.AgentInitializationException;
@@ -48,6 +51,8 @@ import sun.jvmstat.monitor.VmIdentifier;
  */
 public class LocalJvmInfo
 {
+    private static  Log log = LogFactory.getLog(LocalJvmInfo.class);
+
     /**
      * JVM connect address
      */
@@ -144,12 +149,12 @@ public class LocalJvmInfo
         }
         catch (java.net.URISyntaxException sx) 
         {
-            System.err.println(sx.toString());
+            log.error(sx);
             return ;
         } 
         catch (MonitorException mx) 
         {
-            System.err.println(mx.toString());
+            log.error(mx);
             return ;
         }
         
@@ -173,7 +178,7 @@ public class LocalJvmInfo
                 }
                 catch (Exception ex) 
                 {
-                    System.err.println(ex.toString());
+                    log.error(ex);
                 }
                 // put LocalJvmInfo
                 if (isMyProcess(name) != true)
@@ -218,12 +223,12 @@ public class LocalJvmInfo
                     catch (AttachNotSupportedException ex)
                     {
                         // not attachable
-                        System.err.println(ex.toString());
+                        log.error(ex);
                     }
                     catch (IOException ioex)
                     {
                         // ignore
-                        System.err.println(ioex.toString());
+                        log.error(ioex);
                     }
                     // put LocalJvmInfo
                     if (isMyProcess(vmd.displayName()) != true)
@@ -242,7 +247,7 @@ public class LocalJvmInfo
             catch (NumberFormatException numex)
             {
                 // do not support vmid different than pid
-                System.err.println(numex.toString());
+                log.error(numex);
             }
         }
     }

@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.fluentd.jvmwatcher.data.GarbageCollectorState;
 import org.fluentd.jvmwatcher.data.JvmStateLog;
 import org.fluentd.jvmwatcher.data.JvmWatchState;
@@ -35,6 +37,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
  */
 public class JsonSimpleLogParser extends AbstractStateParser
 {
+    private static  Log log = LogFactory.getLog(AbstractStateParser.class);
 
     /* (非 Javadoc)
      * @see org.fluentd.jvmwatcher.parser.AbstractStateParser#parseState(java.io.PrintWriter, org.fluentd.jvmwatcher.data.JvmWatchState)
@@ -54,7 +57,7 @@ public class JsonSimpleLogParser extends AbstractStateParser
         }
         catch (IOException ex)
         {
-            System.err.println(ex.toString());
+            log.error(ex);
             ret = false;
         }
         finally
@@ -68,7 +71,7 @@ public class JsonSimpleLogParser extends AbstractStateParser
                 }
                 catch (IOException ex)
                 {
-                    System.err.println("flush error. " + ex.toString());
+                    log.error(ex);
                 }
             }
         }

@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.fluentd.jvmwatcher.data.JvmWatchState;
 import org.fluentd.jvmwatcher.parser.AbstractStateParser;
 import org.fluentd.jvmwatcher.parser.JsonSimpleLogParser;
@@ -36,6 +38,8 @@ import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
  */
 public class JvmWatcher
 {
+    private static  Log log = LogFactory.getLog(JvmWatcher.class);
+    
     private     Map<Integer, JvmWatchThread>    jvmProcessorMap_ = new HashMap<Integer, JvmWatchThread>();
     private     OutputParseThread               jsonOutputParseTread_ = null;
     private     BlockingQueue<JvmWatchState>    queue_ = new LinkedBlockingQueue<JvmWatchState>();
@@ -140,6 +144,7 @@ public class JvmWatcher
             }
             catch (InterruptedException ex)
             {
+                log.error(ex);
                 System.exit(1);
             }
         }
@@ -163,7 +168,7 @@ public class JvmWatcher
             {
                 ret = defaultName;
             }
-            System.err.println("unknown hostname. check to /etc/hosts.  Exception=" + ex);
+            log.error(ex);
         }
         return ret;
     }

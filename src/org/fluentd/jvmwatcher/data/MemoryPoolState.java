@@ -19,6 +19,9 @@ package org.fluentd.jvmwatcher.data;
 
 import java.lang.management.MemoryUsage;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * The class that stores the status obtained from MemoryPool.
  * @author miyake
@@ -26,6 +29,8 @@ import java.lang.management.MemoryUsage;
  */
 public final class MemoryPoolState
 {
+    private static  Log log = LogFactory.getLog(MemoryPoolState.class);
+
     private String      poolName_ = null;
     private long        usageThreshold_ = 0L;
     private MemoryUsage usage_ = null;

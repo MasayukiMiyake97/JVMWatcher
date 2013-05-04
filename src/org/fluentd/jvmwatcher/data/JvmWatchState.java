@@ -24,6 +24,8 @@ import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
 
 /**
@@ -33,6 +35,8 @@ import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
  */
 public final class JvmWatchState implements Cloneable
 {
+    private static  Log log = LogFactory.getLog(JvmWatchState.class);
+
     /**
      * Java program command line 
      */
@@ -204,13 +208,13 @@ public final class JvmWatchState implements Cloneable
         }
         catch (IOException ex)
         {
-            System.err.println(ex.toString());
+            log.error(ex);
             // close JvmClientProxy
             clientProxy.disconnect();
         }
         catch (Exception ex)
         {
-            System.err.println(ex.toString());
+            log.error(ex);
             // close JvmClientProxy
             clientProxy.disconnect();
         }
@@ -433,6 +437,7 @@ public final class JvmWatchState implements Cloneable
         }
         catch (CloneNotSupportedException ex)
         {
+            log.error(ex);
             throw new RuntimeException(ex);
         }
         

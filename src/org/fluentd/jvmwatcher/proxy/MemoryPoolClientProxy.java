@@ -28,6 +28,8 @@ import java.util.Set;
 
 import javax.management.ObjectName;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.fluentd.jvmwatcher.data.MemoryPoolState;
 import com.sun.management.GarbageCollectorMXBean;
 import com.sun.management.GcInfo;
@@ -40,6 +42,8 @@ import com.sun.management.GcInfo;
  */
 public class MemoryPoolClientProxy
 {
+    private static  Log log = LogFactory.getLog(MemoryPoolClientProxy.class);
+
     /**
      * Local Java VM information.
      */
@@ -75,7 +79,7 @@ public class MemoryPoolClientProxy
         }
         catch (IOException ex)
         {
-            System.err.println(ex.toString());
+            log.error("memory pool bean get error.", ex);
             return false;
         }
         
@@ -97,7 +101,7 @@ public class MemoryPoolClientProxy
             }
             catch (Exception ex)
             {
-                System.err.println("get Garbage collection MXBean error." + ex.toString());
+                log.error("get Garbage collection MXBean error.", ex);
             }
         }
         
@@ -163,11 +167,11 @@ public class MemoryPoolClientProxy
                     afterGcUsage = this.lastGcInfo_.getMemoryUsageAfterGc().get(this.poolName_);
                     if (beforeGcUsage == null)
                     {
-                        System.err.println("beforeGcUsage get error.");
+                        log.error("beforeGcUsage get error.");
                     }
                     if (afterGcUsage == null)
                     {
-                        System.err.println("afterGcUsage get error.");
+                        log.error("afterGcUsage get error.");
                     }
                 }
             }

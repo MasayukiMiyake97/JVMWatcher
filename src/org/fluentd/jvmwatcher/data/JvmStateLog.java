@@ -29,6 +29,8 @@ import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.fluentd.jvmwatcher.proxy.JvmClientProxy;
 import org.fluentd.jvmwatcher.proxy.MemoryPoolClientProxy;
 
@@ -38,6 +40,8 @@ import org.fluentd.jvmwatcher.proxy.MemoryPoolClientProxy;
  */
 public final class JvmStateLog
 {
+    private static  Log log = LogFactory.getLog(JvmStateLog.class);
+
     /**
     *
     */
@@ -302,13 +306,13 @@ public final class JvmStateLog
         }
         catch (IOException ex)
         {
-            System.err.println(ex.toString());
+            log.error(ex);
             // close JvmClientProxy
             clientProxy.disconnect();
         }
         catch (Exception ex)
         {
-            System.err.println(ex.toString());
+            log.error(ex);
             // close JvmClientProxy
             clientProxy.disconnect();
         }

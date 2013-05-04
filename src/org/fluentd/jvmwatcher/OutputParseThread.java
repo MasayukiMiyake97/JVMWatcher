@@ -19,6 +19,9 @@ package org.fluentd.jvmwatcher;
 
 import java.io.PrintWriter;
 import java.util.concurrent.BlockingQueue;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.fluentd.jvmwatcher.data.JvmWatchState;
 import org.fluentd.jvmwatcher.parser.AbstractStateParser;
 
@@ -28,6 +31,8 @@ import org.fluentd.jvmwatcher.parser.AbstractStateParser;
  */
 public class OutputParseThread implements Runnable
 {
+    private static  Log log = LogFactory.getLog(OutputParseThread.class);
+
     private     BlockingQueue<JvmWatchState>    queue_ = null;
     private     JvmWatcher              parent_ = null;
     private     AbstractStateParser     parser_ = null;
@@ -63,6 +68,7 @@ public class OutputParseThread implements Runnable
             }
             catch (InterruptedException ex)
             {
+                log.error(ex);
                 break ;
             }
         }

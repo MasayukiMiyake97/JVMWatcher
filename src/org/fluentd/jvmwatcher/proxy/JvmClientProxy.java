@@ -61,7 +61,10 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.fluentd.jvmwatcher.LocalJvmInfo;
+
 import com.sun.management.HotSpotDiagnosticMXBean;
 
 
@@ -73,6 +76,8 @@ import com.sun.management.HotSpotDiagnosticMXBean;
  */
 public class JvmClientProxy
 {
+    private static  Log log = LogFactory.getLog(JvmClientProxy.class);
+
     /**
      * Java VM connection status.
      */
@@ -144,7 +149,12 @@ public class JvmClientProxy
             }    
             catch (IOException ex)
             {
-                System.err.println(ex.toString());
+                log.error("startManagementAgent error.", ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                log.error("startManagementAgent error.", ex);
                 return false;
             }
         }
@@ -161,12 +171,17 @@ public class JvmClientProxy
         }
         catch (MalformedURLException ex)
         {
-            System.err.println(ex.toString());
+            log.error(" connect JVM MBean Server error.", ex);
             return false;
         }
         catch (IOException ex)
         {
-            System.err.println(ex.toString());
+            log.error(" connect JVM MBean Server error.", ex);
+            return false;
+        }
+        catch (Exception ex)
+        {
+            log.error(" connect JVM MBean Server error.", ex);
             return false;
         }
 
@@ -204,27 +219,32 @@ public class JvmClientProxy
         }
         catch (MalformedObjectNameException ex)
         {
-            System.err.println(ex.toString());
+            log.error("connect error.", ex);
             return false;
         }
         catch (IntrospectionException ex)
         {
-            System.err.println(ex.toString());
+            log.error("connect error.", ex);
             return false;
         }
         catch (InstanceNotFoundException ex)
         {
-            System.err.println(ex.toString());
+            log.error("connect error.", ex);
             return false;
         }
         catch (ReflectionException ex)
         {
-            System.err.println(ex.toString());
+            log.error("connect error.", ex);
             return false;
         }
         catch (IOException ex)
         {
-            System.err.println(ex.toString());
+            log.error("connect error.", ex);
+            return false;
+        }
+        catch (Exception ex)
+        {
+            log.error("connect error.", ex);
             return false;
         }
 
@@ -252,7 +272,7 @@ public class JvmClientProxy
             catch (IOException ex)
             {
                 // Ignore ???
-                System.err.println(ex);
+                log.error("Ignore ???.", ex);
             }
             finally
             {
@@ -345,15 +365,15 @@ public class JvmClientProxy
             }
             catch (IntrospectionException ex)
             {
-                System.err.println(ex.toString());
+                log.error("getMBeans error.", ex);
             }
             catch (InstanceNotFoundException ex)
             {
-                System.err.println(ex.toString());
+                log.error("getMBeans error.", ex);
             }
             catch (ReflectionException ex)
             {
-                System.err.println(ex.toString());
+                log.error("getMBeans error.", ex);
             }
         }
         return result;
@@ -377,11 +397,11 @@ public class JvmClientProxy
         catch (InstanceNotFoundException ex)
         {
             // need to set up listener to listen for MBeanServerNotification.
-            System.err.println(ex.toString());
+            log.error("getAttributes error.", ex);
         }
         catch (ReflectionException ex)
         {
-            System.err.println(ex.toString());
+            log.error("getAttributes error.", ex);
         }
 
         return list;
@@ -404,16 +424,16 @@ public class JvmClientProxy
         }
         catch (InstanceNotFoundException ex)
         {
-            System.err.println(ex.toString());
+            log.error("setAttribute error.", ex);
         }
         catch (AttributeNotFoundException ex)
         {
-            System.err.println(ex.toString());
+            log.error("setAttribute error.", ex);
             assert(false);
         }
         catch (ReflectionException ex)
         {
-            System.err.println(ex.toString());
+            log.error("setAttribute error.", ex);
         }
     }
 
@@ -557,12 +577,12 @@ public class JvmClientProxy
         } 
         catch (InstanceNotFoundException ex)
         {
-            System.err.println(ex.toString());
+            log.error("com.sun.management.OperatingSystemMXBean get error.", ex);
              return null;
         }
         catch (MalformedObjectNameException ex)
         {
-            System.err.println(ex.toString());
+            log.error("com.sun.management.OperatingSystemMXBean get error.", ex);
              return null; // should never reach here
         }
 
@@ -599,7 +619,7 @@ public class JvmClientProxy
             }
             catch (MalformedObjectNameException ex)
             {
-                System.err.println(ex.toString());
+                log.error("GarbageCollectorMXBean get error.", ex);
                 return null;
             }
 
@@ -653,7 +673,7 @@ public class JvmClientProxy
             }
             catch (MalformedObjectNameException ex)
             {
-                System.err.println(ex.toString());
+                log.error("MemoryPoolClientProxy get error.", ex);
                 return null;
             }
 

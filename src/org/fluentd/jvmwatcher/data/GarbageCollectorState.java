@@ -17,6 +17,9 @@
 //
 package org.fluentd.jvmwatcher.data;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * 
  * @author miyake
@@ -24,6 +27,8 @@ package org.fluentd.jvmwatcher.data;
  */
 public final class GarbageCollectorState
 {
+    private static  Log log = LogFactory.getLog(GarbageCollectorState.class);
+
     private String  memoryManagerName_ = null;
     private long    collectionCount_ = -1L;
     private long    collectionTime_ = -1L;
