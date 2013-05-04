@@ -142,14 +142,7 @@ public class JsonSimpleLogParser extends AbstractStateParser
                 generator.writeEndObject();
             }
             generator.writeEndArray();
-            
             generator.writeEndObject();
-
-            // change to LIVE_PROCESS
-            if (state.getProcState() == ProcessState.START_PROCESS)
-            {
-                state.setProcState(ProcessState.LIVE_PROCESS);
-            }
         }
         
     }
