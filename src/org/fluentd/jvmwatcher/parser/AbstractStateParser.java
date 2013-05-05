@@ -18,7 +18,6 @@
 package org.fluentd.jvmwatcher.parser;
 
 import java.io.PrintWriter;
-import java.util.Collection;
 import org.fluentd.jvmwatcher.data.JvmWatchState;
 
 /**
