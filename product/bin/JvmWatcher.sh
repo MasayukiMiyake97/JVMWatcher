@@ -1,7 +1,6 @@
 #!/bin/bash
 
 localhostname=$(hostname)
-echo $localhostname
 
 # get JDK path
 pathtojava=$(readlink -e $(which javac))
