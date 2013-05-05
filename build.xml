@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="JVMWatcher" default="product" basedir=".">
+
+    <property name="source" value="src"/>
+    <property name="test" value="test"/>
+    <property name="target" value="target"/>
+    <property name="product" value="product"/>
+    <property name="classes" value="${target}/classes"/>
+    <property name="lib" value="lib"/>
+    <property name="jarname" value="jvmwatcher.jar"/>
+    <property name="java.home" value="${env.JAVA_HOME}"/>
+
+    <!-- target comlipe -->
+    <target name="compile" depends="clean">
+        <mkdir dir="${classes}"/>
+        
+        <javac srcdir="${source}" destdir="${classes}" 
+            classpath="${lib}/commons-logging-1.1.2.jar:
+        	             ${lib}/log4j-1.2.17.jar:
+        	             ${lib}/jackson-core-2.2.0.jar:
+        	             ${java.home}/lib/tools.jar" 
+            encoding="utf-8"/>
+    </target>
+
+    <!-- target clean -->
+    <target name="clean">
+        <delete dir="${classes}"/>
+    </target>
+
+    <!-- make jar -->
+    <target name="makejar" depends="compile">
+        <delete file="${target}/${jarname}"/>
+        <jar jarfile="${target}/${jarname}" basedir="${classes}"/>
+    </target>
+
+    <!-- make jar -->
+    <target name="product" depends="makejar">
+        <mkdir dir="${product}/log"/>
+        <mkdir dir="${product}/lib"/>
+    	 <copy file="${lib}/commons-logging-1.1.2.jar" todir="${product}/lib"/>
+        <copy file="${lib}/log4j-1.2.17.jar" todir="${product}/lib"/>
+        <copy file="${lib}/jackson-core-2.2.0.jar" todir="${product}/lib"/>
+        <copy file="${target}/${jarname}" todir="${product}/lib"/>
+    	
+    </target>
+	
+	
+</project>
