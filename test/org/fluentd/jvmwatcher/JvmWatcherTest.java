@@ -28,5 +28,26 @@ public class JvmWatcherTest
         assertNotNull(hostname);
         System.out.println("hostname=" + hostname);
     }
+
+    @Test
+    public void testparseConfig()
+    {
+        JvmWatcher  src = new JvmWatcher();
+
+        src.loadProperty("nfig.json");
+        src.loadProperty("config/config.json");
+
+        Map<Integer, LocalJvmInfo>  allJvm = LocalJvmInfo.getAllLocalJvmInfos();
+        
+        System.out.println("-- process filter -");
+        for(Map.Entry<Integer, LocalJvmInfo> elem : allJvm.entrySet())
+        {
+            int             key = elem.getKey();
+            LocalJvmInfo    val = elem.getValue();
+            
+            System.out.println("target shortname=" + val.getShortName() + " process name=" + val.getDisplayName());
+        }
+        System.out.println("-- process filter -");
+    }
     
 }
