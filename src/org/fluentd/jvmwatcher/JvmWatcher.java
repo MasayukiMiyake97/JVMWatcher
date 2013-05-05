@@ -52,7 +52,9 @@ public class JvmWatcher
     private     OutputParseThread               jsonOutputParseTread_ = null;
     private     BlockingQueue<JvmWatchState>    queue_ = new LinkedBlockingQueue<JvmWatchState>();
     
-    private     long        refindJvmInterval_ = 20000L;
+    private     long        refindJvmInterval_ = 20000L;    // msec 
+    private     long        watchInterval_ = 1000L;         // msec
+    private     int         logBuffNum_ = 1;
     
     /**
      * @param args
@@ -102,6 +104,8 @@ public class JvmWatcher
      */
     public void startJvmWatcher(String paramFilePath)
     {
+        // load configuration
+        this.loadProperty(paramFilePath);
         
         // start OutputParseThread
         AbstractStateParser     parser = new JsonSimpleLogParser();
@@ -154,7 +158,7 @@ public class JvmWatcher
         {
             // load JSON property file.
             File        file = new File(paramFilePath);
-            
+
             JsonFactory factory = new JsonFactory();
             JsonParser  parser = factory.createParser(file);
 
@@ -166,6 +170,14 @@ public class JvmWatcher
                     if (parser.getText().compareTo("target") == 0)
                     {
                         this.loadTarget(parser);
+                    }
+                    if (parser.getText().compareTo("log_interval") == 0)
+                    {
+                        this.loadLogInterbal(parser);
+                    }
+                    if (parser.getText().compareTo("jvm_interval") == 0)
+                    {
+                        this.loadJvmRefindInterbal(parser);
                     }
                 }
             }
@@ -226,7 +238,57 @@ public class JvmWatcher
             }
         }
     }
-    
+
+    /**
+     * @param parser
+     * @throws JsonParseException
+     * @throws IOException
+     */
+    private void loadLogInterbal(JsonParser parser) throws JsonParseException, IOException
+    {
+        if (parser.nextToken() == JsonToken.START_OBJECT)
+        {
+            while (parser.nextToken() != JsonToken.END_OBJECT)
+            {
+                if ((parser.getCurrentToken() == JsonToken.FIELD_NAME) && (parser.getText().compareTo("interval_time") == 0))
+                {
+                    if (parser.nextToken() == JsonToken.VALUE_NUMBER_INT)
+                    {
+                        this.watchInterval_ = parser.getLongValue();
+                    }
+                }
+                if ((parser.getCurrentToken() == JsonToken.FIELD_NAME) && (parser.getText().compareTo("buff_log_num") == 0))
+                {
+                    if (parser.nextToken() == JsonToken.VALUE_NUMBER_INT)
+                    {
+                        this.logBuffNum_ = parser.getIntValue();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param parser
+     * @throws JsonParseException
+     * @throws IOException
+     */
+    private void loadJvmRefindInterbal(JsonParser parser) throws JsonParseException, IOException
+    {
+        if (parser.nextToken() == JsonToken.START_OBJECT)
+        {
+            while (parser.nextToken() != JsonToken.END_OBJECT)
+            {
+                if ((parser.getCurrentToken() == JsonToken.FIELD_NAME) && (parser.getText().compareTo("interval_time") == 0))
+                {
+                    if (parser.nextToken() == JsonToken.VALUE_NUMBER_INT)
+                    {
+                        this.refindJvmInterval_ = parser.getLongValue();
+                    }
+                }
+            }
+        }
+    }
     
     /**
      * @param pid
@@ -260,8 +322,7 @@ public class JvmWatcher
                     // start JvmWatchThread
                     JvmWatchThread  newWatchThread = new JvmWatchThread(this, this.queue_, clientProxy);
                     // set interval time
-                    //
-                    
+                    newWatchThread.setInterval(this.watchInterval_, this.logBuffNum_);
                     // regist Process map.
                     this.jvmProcessorMap_.put(pid, newWatchThread);
                     // start thread

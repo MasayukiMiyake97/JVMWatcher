@@ -38,7 +38,7 @@ public class JvmWatchThread implements Runnable
     private     JvmClientProxy                  jvmClient_ = null;
     
     private     long        watchInterval_ = 1000L; // msec
-    private     int         logBuffNum_ = 3;
+    private     int         logBuffNum_ = 1;
     
     private     JvmWatchState   watchState_ = null;
     private     JvmWatcher      parent_ = null;
