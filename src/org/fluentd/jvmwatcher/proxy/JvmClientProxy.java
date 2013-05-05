@@ -628,6 +628,7 @@ public class JvmClientProxy
             if (objNameSet != null)
             {
                 Iterator<ObjectName>    iterator = objNameSet.iterator();
+                this.garbageCollectorMBeanList_ = new ArrayList<GarbageCollectorMXBean>();
 
                 while (iterator.hasNext())
                 {
@@ -682,6 +683,7 @@ public class JvmClientProxy
             {
                 Iterator<ObjectName>    iterator = objNameSet.iterator();
 
+                this.memoryPoolList_ = new ArrayList<MemoryPoolClientProxy>();
                 while (iterator.hasNext())
                 {
                     ObjectName objName = iterator.next();

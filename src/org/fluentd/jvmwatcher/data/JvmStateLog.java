@@ -97,9 +97,9 @@ public final class JvmStateLog
     // RuntimeMXBean
     private long        jvmUpTime_ = -1L;
     // MemoryPoolMXBean
-    private Collection<MemoryPoolState>         memoryPoolStateColl_ = new ArrayList<MemoryPoolState>();
+    private Collection<MemoryPoolState>         memoryPoolStateColl_ = null;
     // GarbageCollectorMXBean
-    private Collection<GarbageCollectorState>   gcCollectorState_ = new ArrayList<GarbageCollectorState>();
+    private Collection<GarbageCollectorState>   gcCollectorState_ = null;
     
     // CPU usage
     private float       cpuUsage_ = 0.0F;
@@ -270,6 +270,7 @@ public final class JvmStateLog
             Collection<MemoryPoolClientProxy>  memoryPoolBeansColl = clientProxy.getMemoryPoolClientProxies();
             if (null != memoryPoolBeansColl)
             {
+                ret.memoryPoolStateColl_ = new ArrayList<MemoryPoolState>();
                 for (MemoryPoolClientProxy elem : memoryPoolBeansColl)
                 {
                     if (null != elem)
@@ -288,6 +289,7 @@ public final class JvmStateLog
             Collection<GarbageCollectorMXBean>  garbageCollBeansColl = clientProxy.getGarbageCollectorMXBeans();
             if (null != garbageCollBeansColl)
             {
+                ret.gcCollectorState_ = new ArrayList<GarbageCollectorState>();
                 for (GarbageCollectorMXBean elem : garbageCollBeansColl)
                 {
                     if (null != elem)
