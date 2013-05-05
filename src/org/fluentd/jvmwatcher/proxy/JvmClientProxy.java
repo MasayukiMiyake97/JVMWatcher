@@ -115,8 +115,8 @@ public class JvmClientProxy
     private com.sun.management.OperatingSystemMXBean    sunOperatingSystemMXBean_ = null;
     private HotSpotDiagnosticMXBean                     hotspotDiagnosticMXBean_ = null;
 
-    private List<MemoryPoolClientProxy>                memoryPoolList_ = null;
-    private List<GarbageCollectorMXBean>    garbageCollectorMBeanList_ = null;
+    private List<MemoryPoolClientProxy>                 memoryPoolList_ = new ArrayList<MemoryPoolClientProxy>();
+    private List<GarbageCollectorMXBean>                garbageCollectorMBeanList_ = new ArrayList<GarbageCollectorMXBean>();;
 
     final static private String HOTSPOT_DIAGNOSTIC_MXBEAN_NAME = "com.sun.management:type=HotSpotDiagnostic";
     
@@ -272,7 +272,7 @@ public class JvmClientProxy
             catch (IOException ex)
             {
                 // Ignore ???
-                log.error("Ignore ???.", ex);
+                log.warn("disconnect error.", ex);
             }
             finally
             {
@@ -627,7 +627,6 @@ public class JvmClientProxy
 
             if (objNameSet != null)
             {
-                this.garbageCollectorMBeanList_ = new ArrayList<GarbageCollectorMXBean>();
                 Iterator<ObjectName>    iterator = objNameSet.iterator();
 
                 while (iterator.hasNext())
@@ -681,7 +680,6 @@ public class JvmClientProxy
 
             if (objNameSet != null)
             {
-                this.memoryPoolList_ = new ArrayList<MemoryPoolClientProxy>();
                 Iterator<ObjectName>    iterator = objNameSet.iterator();
 
                 while (iterator.hasNext())

@@ -223,12 +223,12 @@ public class LocalJvmInfo
                     catch (AttachNotSupportedException ex)
                     {
                         // not attachable
-                        log.error(ex);
+                        log.error("get Attachable JVM error", ex);
                     }
                     catch (IOException ioex)
                     {
                         // ignore
-                        log.error(ioex);
+                        log.error("get Attachable JVM error", ioex);
                     }
                     // put LocalJvmInfo
                     if (isMyProcess(vmd.displayName()) != true)
@@ -247,7 +247,7 @@ public class LocalJvmInfo
             catch (NumberFormatException numex)
             {
                 // do not support vmid different than pid
-                log.error(numex);
+                log.error("do not support vmid different than pid.", numex);
             }
         }
     }
@@ -296,6 +296,7 @@ public class LocalJvmInfo
     public static void addTargetProcessPattern(String shortName, Pattern patt)
     {
         filterPassProcMap_.put(shortName, patt);
+        log.info("add target process. shortname=" + shortName + " match pattern=" + patt.pattern());
     }
     
     /**
@@ -327,7 +328,12 @@ public class LocalJvmInfo
             {
                 ret = checkJvm;
                 checkJvm.setShortName(key);
+                log.info("match prosecc=" + val.pattern());
                 break;
+            }
+            else
+            {
+                log.info("unmatch prosecc=" + val.pattern());
             }
         }
         

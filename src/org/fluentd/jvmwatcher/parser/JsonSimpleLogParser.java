@@ -57,7 +57,7 @@ public class JsonSimpleLogParser extends AbstractStateParser
         }
         catch (IOException ex)
         {
-            log.error(ex);
+            log.error("Parse output error.", ex);
             ret = false;
         }
         finally
@@ -71,7 +71,7 @@ public class JsonSimpleLogParser extends AbstractStateParser
                 }
                 catch (IOException ex)
                 {
-                    log.error(ex);
+                    log.error("writer flush error.", ex);
                 }
             }
         }

@@ -47,13 +47,13 @@ public class MemoryPoolClientProxy
     /**
      * Local Java VM information.
      */
-    private JvmClientProxy      clientProxy_ = null;
+    private JvmClientProxy          clientProxy_ = null;
 
-    private String              poolName_ = null;
-    private ObjectName          objName_ = null;
-    private MemoryPoolMXBean    pool_ = null;
+    private String                  poolName_ = null;
+    private ObjectName              objName_ = null;
+    private MemoryPoolMXBean        pool_ = null;
     private Map<ObjectName,Long>    gcCountMap_ = null;
-    private GcInfo              lastGcInfo_ = null;
+    private GcInfo                  lastGcInfo_ = null;
 
 
     /**

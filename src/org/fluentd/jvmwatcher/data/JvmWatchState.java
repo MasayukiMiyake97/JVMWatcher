@@ -208,13 +208,13 @@ public final class JvmWatchState implements Cloneable
         }
         catch (IOException ex)
         {
-            log.error(ex);
+            log.error("get MXBean error.", ex);
             // close JvmClientProxy
             clientProxy.disconnect();
         }
         catch (Exception ex)
         {
-            log.error(ex);
+            log.error("get MXBean error.", ex);
             // close JvmClientProxy
             clientProxy.disconnect();
         }
