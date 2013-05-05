@@ -97,9 +97,9 @@ public final class JvmStateLog
     // RuntimeMXBean
     private long        jvmUpTime_ = -1L;
     // MemoryPoolMXBean
-    private Collection<MemoryPoolState>         memoryPoolStateColl_ = new ArrayList<MemoryPoolState>();;
+    private Collection<MemoryPoolState>         memoryPoolStateColl_ = new ArrayList<MemoryPoolState>();
     // GarbageCollectorMXBean
-    private Collection<GarbageCollectorState>   gcCollectorState_ = new ArrayList<GarbageCollectorState>();;
+    private Collection<GarbageCollectorState>   gcCollectorState_ = new ArrayList<GarbageCollectorState>();
     
     // CPU usage
     private float       cpuUsage_ = 0.0F;

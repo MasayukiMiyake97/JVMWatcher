@@ -115,8 +115,8 @@ public class JvmClientProxy
     private com.sun.management.OperatingSystemMXBean    sunOperatingSystemMXBean_ = null;
     private HotSpotDiagnosticMXBean                     hotspotDiagnosticMXBean_ = null;
 
-    private List<MemoryPoolClientProxy>                 memoryPoolList_ = new ArrayList<MemoryPoolClientProxy>();
-    private List<GarbageCollectorMXBean>                garbageCollectorMBeanList_ = new ArrayList<GarbageCollectorMXBean>();;
+    private List<MemoryPoolClientProxy>                 memoryPoolList_ = null;
+    private List<GarbageCollectorMXBean>                garbageCollectorMBeanList_ = null;
 
     final static private String HOTSPOT_DIAGNOSTIC_MXBEAN_NAME = "com.sun.management:type=HotSpotDiagnostic";
     
