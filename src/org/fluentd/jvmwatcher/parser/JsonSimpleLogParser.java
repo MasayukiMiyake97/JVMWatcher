@@ -97,8 +97,9 @@ public class JsonSimpleLogParser extends AbstractStateParser
             generator.writeNumberField(LOG_DATETIME, elem.getLogDateTime());
             generator.writeStringField(HOST_NAME, this.getHostName());
             generator.writeStringField(PROC_STATE, elem.getProcState().name());
-            generator.writeStringField(SHORT_NAME, state.getShortName());
             generator.writeNumberField(JVM_ID, state.getJvmId());
+            generator.writeStringField(SHORT_NAME, state.getShortName());
+            generator.writeStringField(DISPRAY_NAME, state.getDisplayName());
             // runtime
             generator.writeNumberField(START_TIME, state.getJvmStartTime());
             generator.writeNumberField(LOG_RUN_UP_TIME, elem.getJvmUpTime());
