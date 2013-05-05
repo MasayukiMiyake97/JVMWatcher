@@ -1,7 +1,7 @@
 //
 // A Java VM status Watcher for Fluent
 //
-// Copyright (C) 2013 - 2013 Masayuki Miyake
+// Copyright (C) 2013 Masayuki Miyake
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
