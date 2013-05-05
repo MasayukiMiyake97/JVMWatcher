@@ -156,6 +156,7 @@ public class JsonSimpleLogParser extends AbstractStateParser
             }
             
             generator.writeEndObject();
+            generator.writeRaw("\n");
         }
     }
 
