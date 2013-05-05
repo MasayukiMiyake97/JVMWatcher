@@ -328,12 +328,12 @@ public class LocalJvmInfo
             {
                 ret = checkJvm;
                 checkJvm.setShortName(key);
-                log.info("match prosecc=" + val.pattern());
+                log.debug("match prosecc=" + val.pattern());
                 break;
             }
             else
             {
-                log.info("unmatch prosecc=" + val.pattern());
+                log.debug("unmatch prosecc=" + val.pattern());
             }
         }
         
