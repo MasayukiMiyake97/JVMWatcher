@@ -20,4 +20,3 @@ It decided developing the Java application which continues to output the conditi
 この問題を解決するため、一つのプロセスとして、一定周期で複数のＪＶＭの状態を標準出力に出力し続けるJavaアプリケーションを開発することにしました。
 
 開発する際、ＯｐｅｎＪＤＫに含まれている、JConsoleのソースコードを参考にしています。
-2013年のGWには完成させたい....
