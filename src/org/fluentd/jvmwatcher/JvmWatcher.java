@@ -55,6 +55,7 @@ public class JvmWatcher
     private     long        refindJvmInterval_ = 20000L;    // msec 
     private     long        watchInterval_ = 1000L;         // msec
     private     int         logBuffNum_ = 1;
+    private     String      hostName_ = null;
     
     /**
      * @param args
@@ -72,19 +73,38 @@ public class JvmWatcher
 
         String  type = null;
         String  configPath = null;
+
+        /*
+         * args[0] => command type. watcher or targetlist
+         * args[1] => config file 
+         * args[2] => refind Jvm Interval(msec)
+         * args[3] => watch Interval(msec)
+         * args[4] => logging buffer number
+         * args[5] => host name
+         */
         
         if (args.length == 1)
         {
+            // command type 
             type = args[0];
         }
         else if (args.length >= 2)
         {
+            // command type 
             type = args[0];
+            // config file path
             configPath = args[1];
         }
 
         if ("watcher".compareTo(type) == 0)
         {
+            jvmWatcher.getJvmWatcherParam(args);
+            // 
+            if ("NO_CONFIG".compareTo(configPath) == 0)
+            {
+                configPath = null;
+            }
+            
             jvmWatcher.startJvmWatcher(configPath);
         }
         else if ("targetlist".compareTo(type) == 0)
@@ -100,6 +120,51 @@ public class JvmWatcher
     }
 
     /**
+     * @param args
+     */
+    public void getJvmWatcherParam(String[] args)
+    {
+        for (int cnt = 2; cnt < args.length; cnt++)
+        {
+            try
+            {
+                if (cnt == 2)
+                {
+                    long    val = Long.parseLong(args[cnt]);
+                    if (val > 0)
+                    {
+                        this.refindJvmInterval_ = val;
+                    }
+                }
+                else if (cnt == 3)
+                {
+                    long    val = Long.parseLong(args[cnt]);
+                    if (val > 0)
+                    {
+                        this.watchInterval_ = val;
+                    }
+                }
+                else if (cnt == 4)
+                {
+                    int     val = Integer.parseInt(args[cnt]);
+                    if (val > 0)
+                    {
+                        this.logBuffNum_ = val;
+                    }
+                }
+                else if (cnt == 5)
+                {
+                    this.hostName_ = args[cnt];
+                }
+            }
+            catch (NumberFormatException ex)
+            {
+                log.error("Number paramator error.", ex);
+            }
+        }
+    }
+    
+    /**
      * @param paramFilePath
      */
     public void startJvmWatcher(String paramFilePath)
@@ -110,7 +175,7 @@ public class JvmWatcher
         // start OutputParseThread
         AbstractStateParser     parser = new JsonSimpleLogParser();
 
-        parser.setHostName(getHostName(null));
+        parser.setHostName(getHostName(this.hostName_));
         jsonOutputParseTread_ = new OutputParseThread(this, this.queue_, parser);
         // start thread
         Thread      thread = new Thread(this.jsonOutputParseTread_);
@@ -171,17 +236,8 @@ public class JvmWatcher
                     {
                         this.loadTarget(parser);
                     }
-                    if (parser.getText().compareTo("log_interval") == 0)
-                    {
-                        this.loadLogInterbal(parser);
-                    }
-                    if (parser.getText().compareTo("jvm_interval") == 0)
-                    {
-                        this.loadJvmRefindInterbal(parser);
-                    }
                 }
             }
-            
             parser.close();
         }
         catch (JsonParseException e)
@@ -230,7 +286,6 @@ public class JvmWatcher
                             }
                         }
                     }
-                    
                     // add target pattern
                     Pattern     regexPattern = Pattern.compile(pattern);
                     LocalJvmInfo.addTargetProcessPattern(shortName, regexPattern);
@@ -239,57 +294,6 @@ public class JvmWatcher
         }
     }
 
-    /**
-     * @param parser
-     * @throws JsonParseException
-     * @throws IOException
-     */
-    private void loadLogInterbal(JsonParser parser) throws JsonParseException, IOException
-    {
-        if (parser.nextToken() == JsonToken.START_OBJECT)
-        {
-            while (parser.nextToken() != JsonToken.END_OBJECT)
-            {
-                if ((parser.getCurrentToken() == JsonToken.FIELD_NAME) && (parser.getText().compareTo("interval_time") == 0))
-                {
-                    if (parser.nextToken() == JsonToken.VALUE_NUMBER_INT)
-                    {
-                        this.watchInterval_ = parser.getLongValue();
-                    }
-                }
-                if ((parser.getCurrentToken() == JsonToken.FIELD_NAME) && (parser.getText().compareTo("buff_log_num") == 0))
-                {
-                    if (parser.nextToken() == JsonToken.VALUE_NUMBER_INT)
-                    {
-                        this.logBuffNum_ = parser.getIntValue();
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * @param parser
-     * @throws JsonParseException
-     * @throws IOException
-     */
-    private void loadJvmRefindInterbal(JsonParser parser) throws JsonParseException, IOException
-    {
-        if (parser.nextToken() == JsonToken.START_OBJECT)
-        {
-            while (parser.nextToken() != JsonToken.END_OBJECT)
-            {
-                if ((parser.getCurrentToken() == JsonToken.FIELD_NAME) && (parser.getText().compareTo("interval_time") == 0))
-                {
-                    if (parser.nextToken() == JsonToken.VALUE_NUMBER_INT)
-                    {
-                        this.refindJvmInterval_ = parser.getLongValue();
-                    }
-                }
-            }
-        }
-    }
-    
     /**
      * @param pid
      */
@@ -369,7 +373,6 @@ public class JvmWatcher
         }
     }
     
-    
     /**
      * @return
      */
@@ -391,5 +394,4 @@ public class JvmWatcher
         }
         return ret;
     }
-    
 }
