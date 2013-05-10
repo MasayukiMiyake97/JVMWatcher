@@ -1,7 +1,7 @@
 JVMWatcher
 ==========
 
-JVMWatcher is Java VM Status watcher.
+JVMWatcher is the application which watches over the condition of JavaVM.
 
 JVMWatcher is the Java application which collects the CPU usage rate and the memory usage of more than one JavaVM to the constant period.
 It developed this JVMWatcher to realize the fluentd plug-in ( jvmwatcher ) which collects the operating status of JVM.
