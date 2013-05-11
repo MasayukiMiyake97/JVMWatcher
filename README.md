@@ -35,6 +35,7 @@ fluentdプラグインに組み込んで出力させたJavaVMの稼働ログフ�
   JDK >= 1.6
   
   * On the Linux ( CentOS ), it is OpenJDK In 1.6 pieces of environment, it is doing an operations check.The operations check doesn't go but probably, it works on Ubuntu.
+  * JVMWatcher is using tools.jar which JDK is providing.Therefore, in the JRE environment which tools.jar isn't contained in, it doesn't work.Certainly, use in the environment which JDK is installed in.
 
 ##Copyright
 Copyright (c) 2013 MasayukiMiyake
