@@ -1,8 +1,7 @@
 JVMWatcher
 ==========
 
-JVMWatcher is the application which outputs the log of the JSON form at the constant period, watching in the condition of JavaVM.
-
+JVMWatcher is the application which outputs the log of the JSON format at the constant period, watching in the condition of JavaVM.
 
 JVMWatcher is the Java application which collects the CPU usage rate and the memory usage of more than one JavaVM to the constant period.
 It developed this JVMWatcher to realize the fluentd plug-in ( jvmwatcher ) which collects the operating status of JVM.
