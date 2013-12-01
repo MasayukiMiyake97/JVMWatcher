@@ -55,7 +55,7 @@ public final class JvmStateLog
         */
        LIVE_PROCESS,
        /**
-        * 
+        *  
         */
        END_PROCESS
    }
@@ -103,86 +103,6 @@ public final class JvmStateLog
     
     // CPU usage
     private float       cpuUsage_ = 0.0F;
-
-    /**
-     * Constructor<BR>
-     * This constructor uses only by the unit test.
-     * 
-     * @param procState
-     * @param logDateTime
-     * @param classLoadedCount
-     * @param classUnloadedCount
-     * @param classTotalLoadedCount
-     * @param compileTime
-     * @param heapSize
-     * @param notheapSize
-     * @param pendingFinalizationCount
-     * @param threadCount
-     * @param daemonThreadCount
-     * @param peakThreadCount
-     * @param osAvailableProcessors
-     * @param osSystemLoadAverage
-     * @param committedVirtualMemorySize
-     * @param freePhysicalMemorySize
-     * @param freeSwapSpaceSize
-     * @param processCpuTime
-     * @param totalPhysicalMemorySize
-     * @param totalSwapSpaceSize
-     * @param jvmUpTime
-     * @param memoryPoolStateColl
-     * @param gcCollectorState
-     * @param cpuUsage
-     */
-    private JvmStateLog(ProcessState procState,
-                        long logDateTime,    
-                        int classLoadedCount,
-                        long classUnloadedCount,
-                        long classTotalLoadedCount,
-                        long compileTime,
-                        MemoryUsage heapSize,
-                        MemoryUsage notheapSize,
-                        int pendingFinalizationCount,
-                        int threadCount,
-                        int daemonThreadCount,
-                        int peakThreadCount,
-                        int osAvailableProcessors,
-                        double osSystemLoadAverage,
-                        long committedVirtualMemorySize,
-                        long freePhysicalMemorySize,
-                        long freeSwapSpaceSize,
-                        long processCpuTime,
-                        long totalPhysicalMemorySize,
-                        long totalSwapSpaceSize,
-                        long jvmUpTime,
-                        Collection<MemoryPoolState> memoryPoolStateColl,
-                        Collection<GarbageCollectorState> gcCollectorState,
-                        float cpuUsage)
-    {
-        this.procState_ = procState;
-        this.logDateTime_ = logDateTime;
-        this.classLoadedCount_ = classLoadedCount;
-        this.classUnloadedCount_ = classUnloadedCount;
-        this.classTotalLoadedCount_ = classTotalLoadedCount;
-        this.compileTime_ = compileTime;
-        this.heapSize_ = heapSize;
-        this.notheapSize_ = notheapSize;
-        this.pendingFinalizationCount_ = pendingFinalizationCount;
-        this.threadCount_ = threadCount;
-        this.daemonThreadCount_ = daemonThreadCount;
-        this.peakThreadCount_ = peakThreadCount;
-        this.osAvailableProcessors_ = osAvailableProcessors;
-        this.osSystemLoadAverage_ = osSystemLoadAverage;
-        this.committedVirtualMemorySize_ = committedVirtualMemorySize;
-        this.freePhysicalMemorySize_ = freePhysicalMemorySize;
-        this.freeSwapSpaceSize_ = freeSwapSpaceSize;
-        this.processCpuTime_ = processCpuTime;
-        this.totalPhysicalMemorySize_ = totalPhysicalMemorySize;
-        this.totalSwapSpaceSize_ = totalSwapSpaceSize;
-        this.jvmUpTime_ = jvmUpTime;
-        this.memoryPoolStateColl_ = memoryPoolStateColl;
-        this.gcCollectorState_ = gcCollectorState;
-        this.cpuUsage_ = cpuUsage;
-    }
     
     /**
      * Default Constructor

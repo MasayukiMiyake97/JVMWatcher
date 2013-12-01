@@ -37,12 +37,12 @@ public class JvmWatchThread implements Runnable
     private     BlockingQueue<JvmWatchState>    queue_ = null;
     private     JvmClientProxy                  jvmClient_ = null;
     
-    private     long        watchInterval_ = 1000L; // msec
-    private     int         logBuffNum_ = 1;
+    private     long                            watchInterval_ = 1000L; // msec
+    private     int                             logBuffNum_ = 1;
     
-    private     JvmWatchState   watchState_ = null;
-    private     JvmWatcher      parent_ = null;
-    private     int             pid_ = -1;;
+    private     JvmWatchState                   watchState_ = null;
+    private     JvmWatcher                      parent_ = null;
+    private     int                             pid_ = -1;;
     
     /**
      * 
